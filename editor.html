@@ -1,0 +1,505 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Roadmap Architect</title>
+  <link rel="stylesheet" href="style.css">
+  <style>
+    body { overflow: hidden; user-select: none; }
+    .editor-layout { display: grid; grid-template-columns: 1fr 350px; height: 100vh; }
+    
+    /* --- CANVAS --- */
+    #canvas-area { background: var(--bg-color); position: relative; overflow: hidden; cursor: grab; }
+    #canvas-area:active { cursor: grabbing; }
+    
+    /* Grid Pattern Background */
+    #canvas-area::before {
+      content: ""; position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+      background-image: radial-gradient(var(--line-color) 1px, transparent 1px);
+      background-size: 20px 20px; opacity: 0.3; pointer-events: none;
+    }
+
+    #editor-toolbar {
+      position: absolute; top: 20px; left: 20px; background: var(--panel-bg);
+      padding: 8px; border-radius: 8px; border: 1px solid var(--node-border);
+      display: flex; gap: 10px; z-index: 100; box-shadow: 0 4px 10px rgba(0,0,0,0.2);
+    }
+
+    /* --- RIGHT PANEL --- */
+    .properties-panel {
+      background: var(--node-bg); border-left: 1px solid var(--node-border);
+      padding: 20px; display: flex; flex-direction: column; gap: 15px; overflow-y: auto; z-index: 20;
+    }
+    .form-group { display: flex; flex-direction: column; gap: 5px; }
+    label { font-size: 11px; color: var(--text-muted); font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px; }
+    input, textarea, select {
+      background: var(--input-bg); border: 1px solid var(--node-border);
+      color: var(--text-main); padding: 10px; border-radius: 6px; font-family: inherit; font-size: 14px;
+    }
+    input:focus, textarea:focus { outline: 2px solid var(--node-hover); border-color: transparent; }
+
+    /* --- D3 GRAPH STYLES --- */
+    
+    /* Node Body */
+    .node rect.body { 
+      cursor: move; 
+      stroke: var(--node-border); 
+      stroke-width: 2px; 
+      transition: stroke 0.2s, filter 0.2s;
+    }
+    .node:hover rect.body { stroke: var(--node-hover); }
+    .node.selected rect.body { stroke: #10b981; stroke-width: 3px; filter: drop-shadow(0 0 8px rgba(16, 185, 129, 0.4)); }
+
+    /* Connection Ports (Anchors) */
+    .port {
+      fill: var(--bg-color); stroke: var(--text-muted); stroke-width: 2px;
+      cursor: crosshair; transition: 0.2s;
+    }
+    .port:hover { fill: #10b981; stroke: #10b981; r: 6px; }
+    
+    /* Links */
+    .link { stroke: var(--line-color); stroke-width: 2px; fill: none; pointer-events: stroke; transition: stroke 0.2s; }
+    .link:hover { stroke: #ef4444; stroke-width: 4px; cursor: no-drop; } /* Red on hover to indicate deletion */
+    .temp-link { stroke: #10b981; stroke-width: 2px; stroke-dasharray: 5; fill: none; pointer-events: none; }
+
+    button { font-weight: 600; border: none; }
+  </style>
+</head>
+<body>
+  
+  <div class="editor-layout">
+    
+    <div id="canvas-area">
+      <div id="editor-toolbar">
+        <a href="index.html" style="display:flex; align-items:center; text-decoration:none; color:var(--text-main); font-weight:bold; margin-right:10px; border-right:1px solid var(--line-color); padding-right:10px;">
+          ← Exit
+        </a>
+        <button onclick="addNewNode()" style="background:#3b82f6; color:white;">+ Node</button>
+        <button onclick="downloadJSON()" style="background:#10b981; color:white;">💾 Save</button>
+      </div>
+      <svg id="svg"></svg>
+    </div>
+
+    <div class="properties-panel" id="propPanel">
+      <h2 style="margin:0;">Inspector</h2>
+      <div id="roadmapProps">
+        <div class="form-group">
+          <label>Project Title</label>
+          <input type="text" id="mapTitle" value="New Roadmap" oninput="updateMeta()">
+        </div>
+        <div class="form-group">
+          <label>ID</label>
+          <input type="text" id="mapId" value="custom_map" oninput="updateMeta()">
+        </div>
+        <div style="margin-top:20px; padding:15px; background:rgba(59, 130, 246, 0.1); border-radius:8px; border:1px solid #3b82f6;">
+          <p style="margin:0; font-size:13px; line-height:1.5;">
+            <b>How to connect:</b><br>
+            Drag from any <span style="color:#10b981">● circle</span> on a node to another node's circle.<br><br>
+            <b>Delete link:</b><br>
+            Right-click (or hover & click) on a line.
+          </p>
+        </div>
+      </div>
+
+      <div id="nodeProps" style="display:none; flex-direction: column; gap: 15px;">
+        <hr style="border:0; border-top:1px solid var(--line-color); margin:5px 0;">
+        <div class="form-group">
+          <label>Title</label>
+          <input type="text" id="nodeTitle" oninput="updateActiveNode()">
+        </div>
+        
+        <div class="form-group">
+          <label>Type / Color</label>
+          <select id="nodeGroup" onchange="updateActiveNode()">
+            <option value="core">Core (Blue)</option>
+            <option value="gamedev">Game Dev (Green)</option>
+            <option value="ml">AI / ML (Purple)</option>
+            <option value="crypto">Crypto (Orange)</option>
+            <option value="engineering">Red</option>
+          </select>
+        </div>
+
+        <div class="form-group">
+          <label>Description (Markdown)</label>
+          <textarea id="nodeContent" style="height: 200px;" oninput="updateActiveNode()"></textarea>
+        </div>
+
+        <button onclick="deleteSelectedNode()" style="background:#ef4444; color:white; margin-top:auto;">Delete Node</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="https://d3js.org/d3.v7.min.js"></script>
+  
+  <script>
+    // --- CONFIG ---
+    const NODE_W = 180;
+    const NODE_H = 80;
+    const SNAP_DIST = 20; // Distance to snap to ports
+
+    // --- DATA STATE ---
+    let roadmapData = { id: "custom_map", title: "New Roadmap", nodes: [] };
+    
+    // --- UI STATE ---
+    let svg, gNodes, gLinks, zoom;
+    let selectedNodeId = null;
+    let drawingLine = null; // { sourceId, sourcePort, startX, startY }
+    
+    // Define Ports: [x_offset, y_offset, name]
+    const PORTS = [
+      [NODE_W/2, 0, 'top'],
+      [NODE_W, NODE_H/2, 'right'],
+      [NODE_W/2, NODE_H, 'bottom'],
+      [0, NODE_H/2, 'left']
+    ];
+
+    // --- INIT ---
+    function init() {
+      svg = d3.select("#svg").attr("width", "100%").attr("height", "100%");
+      
+      // Defs for Arrow
+      svg.append("defs").append("marker")
+        .attr("id", "arrow").attr("viewBox", "0 -5 10 10")
+        .attr("refX", 5).attr("refY", 0) // Adjusted for Bezier
+        .attr("markerWidth", 5).attr("markerHeight", 5)
+        .attr("orient", "auto")
+        .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--line-color)");
+
+      // Layers (Order matters: Links bottom, Nodes top)
+      const container = svg.append("g");
+      gLinks = container.append("g").attr("class", "layer-links");
+      gNodes = container.append("g").attr("class", "layer-nodes");
+      
+      // Temporary Drawing Line
+      const tempPath = container.append("path").attr("class", "temp-link").attr("d", "");
+
+      // Zoom Behavior
+      zoom = d3.zoom().on("zoom", e => container.attr("transform", e.transform));
+      svg.call(zoom).on("dblclick.zoom", null); // Disable double click zoom
+      
+      // Global Events for Drawing
+      svg.on("mousemove", e => {
+        if(drawingLine) {
+          const [mx, my] = d3.pointer(e, container.node());
+          // Draw a straight line or curve to mouse
+          tempPath.attr("d", `M${drawingLine.startX},${drawingLine.startY} L${mx},${my}`);
+        }
+      });
+
+      svg.on("mouseup", () => {
+        if(drawingLine) {
+          drawingLine = null;
+          tempPath.attr("d", ""); // Clear line
+        }
+      });
+
+      // Initial View
+      svg.call(zoom.transform, d3.zoomIdentity.translate(100, 100));
+      render();
+    }
+
+    // --- RENDER ---
+    function render() {
+      // 1. Render Links
+      const links = [];
+      roadmapData.nodes.forEach(n => {
+        if(n.prerequisites) {
+          n.prerequisites.forEach(pId => {
+            const src = roadmapData.nodes.find(x => x.id === pId);
+            const tgt = n;
+            if(src && tgt) links.push({ src, tgt });
+          });
+        }
+      });
+
+      const linkSel = gLinks.selectAll(".link").data(links, d => d.src.id + "-" + d.tgt.id);
+      linkSel.exit().remove();
+      
+      linkSel.enter().append("path")
+        .attr("class", "link")
+        .attr("marker-end", "url(#arrow)")
+        .on("click", (e, d) => deleteLink(d)) // Click to delete
+        .on("contextmenu", (e, d) => { e.preventDefault(); deleteLink(d); })
+        .merge(linkSel)
+        .attr("d", d => calculateBezier(d.src, d.tgt));
+
+      // 2. Render Nodes
+      const nodeSel = gNodes.selectAll(".node-group").data(roadmapData.nodes, d => d.id);
+      nodeSel.exit().remove();
+
+      const nodeEnter = nodeSel.enter().append("g")
+        .attr("class", "node-group")
+        .call(d3.drag().on("start", dragStart).on("drag", dragging).on("end", dragEnd));
+
+      // Node Box
+      nodeEnter.append("rect").attr("class", "body")
+        .attr("width", NODE_W).attr("height", NODE_H).attr("rx", 8);
+
+      // Node Text
+      nodeEnter.append("text")
+        .attr("x", NODE_W/2).attr("y", NODE_H/2)
+        .attr("text-anchor", "middle").attr("dominant-baseline", "middle")
+        .style("pointer-events", "none").style("fill", "var(--text-main)");
+
+      // 4 Ports (Anchors)
+      PORTS.forEach(p => {
+        nodeEnter.append("circle")
+          .attr("class", "port")
+          .attr("cx", p[0]).attr("cy", p[1]).attr("r", 5)
+          .on("mousedown", (e, d) => startDrawing(e, d, p));
+      });
+
+      // Update Styling & Position
+      const allNodes = nodeEnter.merge(nodeSel);
+      allNodes.attr("transform", d => `translate(${d.x}, ${d.y})`);
+      allNodes.attr("data-group", d => d.group || 'core'); // CSS Color
+      allNodes.classed("selected", d => d.id === selectedNodeId);
+      allNodes.select("text").text(d => d.title.length > 20 ? d.title.substr(0,18)+'...' : d.title);
+    }
+
+    // --- LOGIC: BEZIER CURVES ---
+    function calculateBezier(src, tgt) {
+      // Logic to find closest ports automatically or use fixed centers
+      // For simplicity and beauty: Calculate centers
+      const sx = src.x + NODE_W/2;
+      const sy = src.y + NODE_H/2;
+      const tx = tgt.x + NODE_W/2;
+      const ty = tgt.y + NODE_H/2;
+
+      // Determine direction for control points
+      const dx = tx - sx;
+      const dy = ty - sy;
+      
+      // Start/End points (Edges of rect)
+      let start = {x: sx, y: src.y + NODE_H}; // Default Bottom
+      let end = {x: tx, y: tgt.y}; // Default Top
+
+      // Heuristic: If target is to the right?
+      if (Math.abs(dx) > Math.abs(dy)) {
+        if(dx > 0) { start = {x: src.x + NODE_W, y: sy}; end = {x: tgt.x, y: ty}; } // Right -> Left
+        else { start = {x: src.x, y: sy}; end = {x: tgt.x + NODE_W, y: ty}; } // Left -> Right
+      } else {
+        if(dy > 0) { start = {x: sx, y: src.y + NODE_H}; end = {x: tx, y: tgt.y}; } // Bottom -> Top
+        else { start = {x: sx, y: src.y}; end = {x: tx, y: tgt.y + NODE_H}; } // Top -> Bottom
+      }
+
+      // Bezier Control Points
+      const dist = Math.sqrt(dx*dx + dy*dy) * 0.5;
+      
+      // Vertical Logic
+      if (Math.abs(dy) > Math.abs(dx)) {
+        return `M${start.x},${start.y} C${start.x},${start.y + dist} ${end.x},${end.y - dist} ${end.x},${end.y}`;
+      } 
+      // Horizontal Logic
+      else {
+        return `M${start.x},${start.y} C${start.x + dist},${start.y} ${end.x - dist},${end.y} ${end.x},${end.y}`;
+      }
+    }
+
+    // --- INTERACTION ---
+    function startDrawing(e, d, port) {
+      e.stopPropagation(); // Don't drag node
+      // Global coords
+      const startX = d.x + port[0];
+      const startY = d.y + port[1];
+      
+      drawingLine = { sourceId: d.id, startX, startY };
+    }
+
+    // Used in mouseup (global) to detect if we dropped on a node
+    // D3 handles dragging, but for dropping line on a port, we need a trick.
+    // Simpler: Just drop on the node body is enough.
+    
+    // Let's attach mouseup to ports as well to catch the "End Draw"
+    // Actually, mouseup bubbles.
+    
+    // We need to modify the port creation to handle mouseup event separately
+    // The previous init code handles svg mouseup to cancel.
+    // We need a specific mouseup on ports to Connect.
+    
+    // Update Ports in RENDER function:
+    // ... .on("mouseup", (e, d) => finishDrawing(e, d));
+    
+    // Patching render function for ports interaction:
+    // (This part is conceptually inside render(), I'll patch it in the full block above in your copy-paste)
+    
+    // --- UPDATED PORT LOGIC (Internal) ---
+    // Since I cannot edit the block above mid-text, I will assume you pasted the code.
+    // I need to make sure the `on("mouseup")` is attached to ports in `render()`.
+    
+    function finishDrawing(e, targetNode) {
+      if (!drawingLine) return;
+      e.stopPropagation();
+
+      const sourceId = drawingLine.sourceId;
+      const targetId = targetNode.id;
+
+      if (sourceId === targetId) return; // No self loops
+
+      // Add link data
+      const targetNodeData = roadmapData.nodes.find(n => n.id === targetId);
+      if (!targetNodeData.prerequisites) targetNodeData.prerequisites = [];
+      
+      // Check duplicate
+      if (!targetNodeData.prerequisites.includes(sourceId)) {
+        targetNodeData.prerequisites.push(sourceId);
+        render(); // Redraw
+      }
+      
+      drawingLine = null;
+      d3.select(".temp-link").attr("d", "");
+    }
+
+    // --- DRAG NODE ---
+    function dragStart(e, d) {
+      d3.select(this).raise();
+      selectNode(d.id);
+    }
+    function dragging(e, d) {
+      d.x = e.x;
+      d.y = e.y;
+      d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`);
+      render(); // Update lines
+    }
+    function dragEnd(e, d) { /* Save state if undo existed */ }
+
+    // --- ACTIONS ---
+    function addNewNode() {
+      const id = "node_" + Date.now();
+      roadmapData.nodes.push({
+        id, title: "New Node", group: "core", content: "# Details",
+        prerequisites: [], x: 200, y: 200
+      });
+      render();
+      selectNode(id);
+    }
+
+    function selectNode(id) {
+      selectedNodeId = id;
+      render();
+      const n = roadmapData.nodes.find(x => x.id === id);
+      if(!n) return;
+
+      document.getElementById('roadmapProps').style.display = 'none';
+      document.getElementById('nodeProps').style.display = 'flex';
+      
+      document.getElementById('nodeTitle').value = n.title;
+      document.getElementById('nodeGroup').value = n.group || 'core';
+      document.getElementById('nodeContent').value = n.content || '';
+    }
+
+    function updateActiveNode() {
+      if(!selectedNodeId) return;
+      const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
+      n.title = document.getElementById('nodeTitle').value;
+      n.group = document.getElementById('nodeGroup').value;
+      n.content = document.getElementById('nodeContent').value;
+      render(); // Live update
+    }
+
+    function deleteSelectedNode() {
+      if(!selectedNodeId) return;
+      roadmapData.nodes = roadmapData.nodes.filter(n => n.id !== selectedNodeId);
+      // Remove connections
+      roadmapData.nodes.forEach(n => {
+        if(n.prerequisites) n.prerequisites = n.prerequisites.filter(p => p !== selectedNodeId);
+      });
+      selectedNodeId = null;
+      document.getElementById('nodeProps').style.display = 'none';
+      document.getElementById('roadmapProps').style.display = 'block';
+      render();
+    }
+
+    function deleteLink(data) {
+      // data is {src, tgt}
+      // We need to remove src.id from tgt.prerequisites
+      const tgt = roadmapData.nodes.find(n => n.id === data.tgt.id);
+      tgt.prerequisites = tgt.prerequisites.filter(pid => pid !== data.src.id);
+      render();
+    }
+
+    function downloadJSON() {
+      const str = "data:text/json;charset=utf-8," + encodeURIComponent(JSON.stringify(roadmapData, null, 2));
+      const a = document.createElement('a');
+      a.href = str;
+      a.download = document.getElementById('mapTitle').value.replace(/\s+/g, '_') + ".json";
+      a.click();
+    }
+
+    function updateMeta() {
+      roadmapData.title = document.getElementById('mapTitle').value;
+      roadmapData.id = document.getElementById('mapId').value;
+    }
+
+    // --- PATCH: Add MouseUp to Ports ---
+    // Overwriting specific lines in render for brevity won't work well in chat.
+    // I will include the full fixed render function below to ensure copy-paste works.
+    
+    // RE-INJECTING RENDER WITH PORT EVENTS
+    const originalInit = init;
+    init = function() {
+        originalInit();
+    }
+    
+    const originalRender = render;
+    render = function() {
+      // 1. Links
+      const links = [];
+      roadmapData.nodes.forEach(n => {
+        if(n.prerequisites) {
+          n.prerequisites.forEach(pId => {
+            const src = roadmapData.nodes.find(x => x.id === pId);
+            const tgt = n;
+            if(src && tgt) links.push({ src, tgt });
+          });
+        }
+      });
+
+      const linkSel = gLinks.selectAll(".link").data(links, d => d.src.id + "-" + d.tgt.id);
+      linkSel.exit().remove();
+      linkSel.enter().append("path")
+        .attr("class", "link")
+        .attr("marker-end", "url(#arrow)")
+        .on("contextmenu", (e, d) => { e.preventDefault(); deleteLink(d); })
+        .on("click", (e, d) => { if(e.shiftKey) deleteLink(d); }) // Shift+Click to delete
+        .merge(linkSel)
+        .attr("d", d => calculateBezier(d.src, d.tgt));
+
+      // 2. Nodes
+      const nodeSel = gNodes.selectAll(".node-group").data(roadmapData.nodes, d => d.id);
+      nodeSel.exit().remove();
+
+      const nodeEnter = nodeSel.enter().append("g")
+        .attr("class", "node-group")
+        .call(d3.drag().on("start", dragStart).on("drag", dragging).on("end", dragEnd))
+        .on("click", (e, d) => selectNode(d.id)); // Select on click
+
+      nodeEnter.append("rect").attr("class", "body")
+        .attr("width", NODE_W).attr("height", NODE_H).attr("rx", 8);
+
+      nodeEnter.append("text")
+        .attr("x", NODE_W/2).attr("y", NODE_H/2)
+        .attr("text-anchor", "middle").attr("dominant-baseline", "middle")
+        .style("pointer-events", "none").style("fill", "var(--text-main)");
+
+      // PORTS
+      PORTS.forEach(p => {
+        nodeEnter.append("circle")
+          .attr("class", "port")
+          .attr("cx", p[0]).attr("cy", p[1]).attr("r", 5)
+          .on("mousedown", (e, d) => startDrawing(e, d, p))
+          .on("mouseup", (e, d) => finishDrawing(e, d)); // <--- FIXED: Connect on mouseup
+      });
+
+      const allNodes = nodeEnter.merge(nodeSel);
+      allNodes.attr("transform", d => `translate(${d.x}, ${d.y})`);
+      allNodes.attr("data-group", d => d.group || 'core');
+      allNodes.classed("selected", d => d.id === selectedNodeId);
+      allNodes.select("text").text(d => d.title.length > 20 ? d.title.substr(0,18)+'...' : d.title);
+    }
+
+    // Start
+    init();
+  </script>
+</body>
+</html>

@@ -2,42 +2,78 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoadMap Community</title>
+  <title>Roadmap Platform</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">☀️</button>
 
-  <div id="toolbar">
-    <h1 id="map-title">Loading...</h1>
-    <span class="separator">|</span>
-    <button onclick="resetView()">Reset View</button>
-    <button class="danger" onclick="clearProgress()">Reset Progress</button>
-    <span class="separator">|</span>
-    <button onclick="toggleTheme()" id="theme-btn" title="Toggle Theme">☀️</button>
+  <div class="hero">
+    <h1>Knowledge Roadmaps</h1>
+    <p>Interactive skill trees for self-taught developers.</p>
+    
+    <div style="margin-top: 30px;">
+      <button onclick="document.getElementById('file-input').click()" 
+              style="padding: 12px 24px; font-size: 16px; background: #3b82f6; color: white; border: none;">
+        📂 Open Local JSON
+      </button>
+      <input type="file" id="file-input" accept=".json" style="display: none;" onchange="loadUserFile(this)">
+      <div style="margin-top: 10px;">
+        <a href="editor.html" style="color: var(--text-muted); font-size: 14px;">Or create a new roadmap →</a>
+      </div>
+    </div>
   </div>
 
-  <div id="stats-panel">
-    <div class="stats-value" id="progress-text">0 / 0</div>
-    <div class="stats-label" id="progress-percent">0% Completed</div>
-  </div>
+  <div class="grid" id="grid">Loading directory...</div>
 
-  <div id="loading">Loading...</div>
+  <script>
+    // Theme Logic
+    function toggleTheme() {
+      document.body.classList.toggle('light-theme');
+      localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = document.body.classList.contains('light-theme') ? '🌙' : '☀️';
+    }
+    if(localStorage.getItem('theme') === 'light') toggleTheme();
 
-  <div id="canvas-container">
-    <svg id="svg"></svg>
-  </div>
+    fetch('directory.json')
+      .then(res => res.json())
+      .then(data => {
+        const grid = document.getElementById('grid');
+        grid.innerHTML = data.map(map => {
 
-  <div id="panel">
-    <button class="close-btn" onclick="closePanel()">×</button>
-    <h2 id="p-title">Title</h2>
-    <span id="p-id" class="badge">ID</span>
-    <div id="p-content">Content...</div>
-    <br>
-    <button id="p-toggle" class="action-btn">Mark as Completed</button>
-  </div>
+          const pData = JSON.parse(localStorage.getItem('roadmap-progress') || '{}');
+          const mapP = pData[map.id || map.file] || {};
+          const completed = Object.keys(mapP).length;
+          
+          return `
+          <a href="viewer.html?map=${map.file}" class="card">
+            <div style="font-size: 40px; margin-bottom: 10px;">${map.icon}</div>
+            <h3 style="margin-bottom:10px">${map.title}</h3>
+            <p style="color: var(--text-muted); margin-bottom: 20px; flex-grow: 1; line-height: 1.5;">${map.description}</p>
+            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line-color); padding-top:15px;">
+              <span class="badge">${map.difficulty}</span>
+              <span style="font-size:13px; color: ${completed > 0 ? '#10b981' : 'var(--text-muted)'}">
+                ${completed > 0 ? '✅ Started' : 'Start →'}
+              </span>
+            </div>
+          </a>
+        `}).join('');
+      })
+      .catch(err => document.getElementById('grid').innerHTML = "Error loading directory.json");
 
-  <script src="https://d3js.org/d3.v7.min.js"></script>
-  <script src="script.js"></script>
+    function loadUserFile(input) {
+      const file = input.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = function(e) {
+        try {
+          const json = JSON.parse(e.target.result);
+          localStorage.setItem('temp_roadmap', JSON.stringify(json));
+          window.location.href = 'viewer.html?local=true';
+        } catch (err) { alert("Invalid JSON!"); }
+      };
+      reader.readAsText(file);
+    }
+  </script>
 </body>
 </html>
