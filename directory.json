@@ -1,9 +1,23 @@
 [
   {
+    "file": "life_algorithm.json",
+    "title": "Quest: Buy Bread",
+    "description": "Hardcore social survival algorithm.",
+    "icon": "🍞",
+    "difficulty": "Impossible"
+  },
+  {
+    "file": "fix_bug.json",
+    "title": "Debug Cycle",
+    "description": "The lifecycle of a bug (and your sanity).",
+    "icon": "🐛",
+    "difficulty": "Real Life"
+  },
+  {
     "file": "math.json",
     "title": "Math Universe",
-    "description": "Complete skill tree from Arithmetic to Research Level.",
+    "description": "Serious science. From Arithmetic to Calculus.",
     "icon": "🧮",
-    "difficulty": "Hardcore"
+    "difficulty": "Hard"
   }
 ]

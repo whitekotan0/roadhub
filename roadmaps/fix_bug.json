@@ -1,0 +1,26 @@
+{
+  "id": "bug_fix",
+  "title": "How to Fix a Bug",
+  "description": "Infinite loop of developer suffering.",
+  "nodes": [
+    { "id": "start", "title": "Bug in Prod", "group": "engineering", "x": 400, "y": 50, "content": "Clients are screaming. PM is calling." },
+    
+    { "id": "repro", "title": "Reproducible locally?", "group": "warning", "x": 400, "y": 200, "prerequisites": ["start"] },
+    
+    { "id": "works_fine", "title": "Works on my machine", "group": "gamedev", "x": 700, "y": 200, "content": "Close ticket `STATUS: WONTFIX`.\nGo drink coffee.", "prerequisites": ["repro"] },
+    
+    { "id": "google", "title": "Google Error", "group": "core", "x": 400, "y": 350, "prerequisites": ["repro"] },
+    
+    { "id": "so", "title": "StackOverflow", "group": "core", "x": 400, "y": 500, "content": "Copy top solution (don't even read it).", "prerequisites": ["google"] },
+    
+    { "id": "paste", "title": "Paste Code", "group": "ml", "x": 400, "y": 650, "prerequisites": ["so"] },
+    
+    { "id": "worse", "title": "Did it get worse?", "group": "warning", "x": 400, "y": 800, "prerequisites": ["paste"] },
+    
+    { "id": "panic", "title": "Panic", "group": "crypto", "x": 700, "y": 800, "content": "`git reset --hard`\nPray.", "prerequisites": ["worse"] },
+    
+    { "id": "git_blame", "title": "git blame", "group": "research", "x": 400, "y": 950, "content": "Find out who wrote this crap.", "prerequisites": ["worse"] },
+    
+    { "id": "me", "title": "It was me 2 years ago", "group": "engineering", "x": 400, "y": 1100, "content": "# Realization\nPlay sad music.", "prerequisites": ["git_blame"] }
+  ]
+}

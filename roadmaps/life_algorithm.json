@@ -1,0 +1,26 @@
+{
+  "id": "bread_quest",
+  "title": "Quest: Buy Bread",
+  "description": "Hardcore survival algorithm for introverts.",
+  "nodes": [
+    { "id": "start", "title": "Get off the couch", "group": "core", "x": 400, "y": 50, "content": "# Mission Start\nThe hardest part is over." },
+    
+    { "id": "check_pants", "title": "Wearing pants?", "group": "warning", "x": 400, "y": 200, "content": "Check `hasPants == true`", "prerequisites": ["start"] },
+    
+    { "id": "no_pants", "title": "Put on pants", "group": "engineering", "x": 700, "y": 200, "content": "Optional, but highly recommended for social credit score.", "prerequisites": ["check_pants"] },
+    
+    { "id": "check_money", "title": "Have money?", "group": "warning", "x": 400, "y": 350, "content": "Check balance.", "prerequisites": ["check_pants", "no_pants"] },
+    
+    { "id": "no_money", "title": "Search for coins", "group": "research", "x": 700, "y": 350, "content": "Loot: 0-50 coins. Check winter jacket pockets.", "prerequisites": ["check_money"] },
+    
+    { "id": "go_outside", "title": "Go Outside", "group": "core", "x": 400, "y": 500, "content": "**Loading world...**\nGraphics are great, gameplay is meh.", "prerequisites": ["check_money", "no_money"] },
+    
+    { "id": "shop_closed", "title": "Shop open?", "group": "warning", "x": 400, "y": 650, "content": "`if (time > 23:00)`", "prerequisites": ["go_outside"] },
+    
+    { "id": "cry", "title": "Cry", "group": "crypto", "x": 700, "y": 650, "content": "Mission Failed.", "prerequisites": ["shop_closed"] },
+    
+    { "id": "buy", "title": "Buy Bread", "group": "gamedev", "x": 400, "y": 800, "content": "-100 Gold\n+50 XP", "prerequisites": ["shop_closed"] },
+    
+    { "id": "success", "title": "Feast", "group": "ml", "x": 400, "y": 950, "content": "# Mission Complete\nRespect +", "prerequisites": ["buy"] }
+  ]
+}
