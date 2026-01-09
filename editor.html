@@ -176,6 +176,28 @@
     .temp-link {
       pointer-events: none !important;
     }
+    
+    .close-node-btn {
+      padding: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      border-radius: 8px;
+      background: rgba(255, 255, 255, 0.05);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      transition: all 400ms var(--spring);
+    }
+    
+    .close-node-btn:hover {
+      background: rgba(239, 68, 68, 0.2);
+      border-color: var(--accent-danger);
+      transform: scale(1.1) rotate(90deg);
+    }
+    
+    .close-node-btn:active {
+      transform: scale(0.95) rotate(90deg);
+    }
   </style>
 </head>
 <body>
@@ -252,10 +274,15 @@
       </div>
 
       <div id="nodeProps" style="display:none;">
-        <div style="padding: var(--spacing-md); background: var(--surface-glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg);">
+        <div style="padding: var(--spacing-md); background: var(--surface-glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg); display: flex; justify-content: space-between; align-items: center;">
           <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">
             Edit Node
           </h3>
+          <button onclick="closeNodePanel()" class="close-node-btn" aria-label="Close">
+            <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+              <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+            </svg>
+          </button>
         </div>
         
         <div class="form-group">
@@ -741,6 +768,14 @@
       const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
       n.title = document.getElementById('nodeTitle').value;
       n.content = document.getElementById('nodeContent').value;
+      render();
+    }
+    
+    function closeNodePanel() {
+      selectedNodeId = null;
+      document.getElementById('nodeProps').style.display = 'none';
+      document.getElementById('roadmapProps').classList.remove('collapsed');
+      document.getElementById('helpBox').style.display = 'block';
       render();
     }
 

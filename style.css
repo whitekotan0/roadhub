@@ -781,7 +781,7 @@ button:disabled {
   border-left: 1px solid rgba(255, 255, 255, 0.1);
   padding: var(--spacing-2xl);
   transition: all 600ms var(--spring);
-  z-index: 200;
+  z-index: 1500;
   overflow-y: auto;
   box-shadow: -16px 0 48px rgba(0, 0, 0, 0.5);
 }
@@ -873,15 +873,21 @@ button:disabled {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 400ms var(--spring);
   font-size: 28px;
   color: var(--text-muted);
   transition: all var(--transition-fast);
 }
 
 .close-btn:hover {
-  background: rgba(255, 255, 255, 0.1);
-  color: var(--text-primary);
-  transform: rotate(90deg);
+  background: rgba(239, 68, 68, 0.2);
+  color: var(--accent-danger);
+  transform: rotate(90deg) scale(1.1);
+  border: 1px solid var(--accent-danger);
+}
+
+.close-btn:active {
+  transform: rotate(90deg) scale(0.9);
 }
 
 /* --- EDITOR --- */

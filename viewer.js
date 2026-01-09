@@ -176,18 +176,6 @@ function initGraph() {
     .attr("offset", "100%")
     .attr("stop-color", "var(--accent-primary)")
     .attr("stop-opacity", 1);
-  
-  defs.append("marker")
-    .attr("id", "arrow")
-    .attr("viewBox", "0 -5 10 10")
-    .attr("refX", NODE_WIDTH/2 + 10)
-    .attr("refY", 0)
-    .attr("markerWidth", 8)
-    .attr("markerHeight", 8)
-    .attr("orient", "auto")
-    .append("path")
-    .attr("d", "M0,-5L10,0L0,5")
-    .attr("fill", "url(#arrow-gradient)");
 
   g = svg.append("g");
   zoom = d3.zoom()
@@ -209,7 +197,6 @@ function render() {
   g.selectAll(".link").remove();
   g.selectAll(".link").data(linksData).enter().append("path")
     .attr("class", "link")
-    .attr("marker-end", "url(#arrow)")
     .attr("d", d => {
       const s = nodesData.find(n => n.id === (d.source.id || d.source));
       const t = nodesData.find(n => n.id === (d.target.id || d.target));

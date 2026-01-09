@@ -110,15 +110,6 @@ function initGraph() {
   const container = document.getElementById('canvas-container');
   svg = d3.select("#svg").attr("width", "100%").attr("height", "100%");
 
-  // Marker setup
-  svg.append("defs").append("marker")
-    .attr("id", "arrow").attr("viewBox", "0 -5 10 10")
-    .attr("refX", NODE_WIDTH / 2 + 10).attr("refY", 0)
-    .attr("markerWidth", 6).attr("markerHeight", 6)
-    .attr("orient", "auto")
-    .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "var(--line-color)"); 
-    // ^ Note: fill color here needs to handle theme changes or be static gray
-
   g = svg.append("g");
 
   zoom = d3.zoom().scaleExtent([0.1, 2]).on("zoom", (e) => g.attr("transform", e.transform));
@@ -137,7 +128,6 @@ function render() {
   // Links
   g.selectAll(".link").data(linksData).join("path")
     .attr("class", "link")
-    .attr("marker-end", "url(#arrow)")
     .attr("d", d => {
       const src = nodesData.find(n => n.id === d.source);
       const trg = nodesData.find(n => n.id === d.target);
