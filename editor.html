@@ -6,7 +6,13 @@
   <title>RoadHub - Visual Editor</title>
   <link rel="stylesheet" href="style.css">
   <style>
-    body { overflow: hidden; }
+    body { 
+      overflow: hidden; 
+      user-select: none; /* Отключаем выделение текста глобально */
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+    }
     
     .editor-layout {
       display: grid;
@@ -14,7 +20,14 @@
       height: 100vh;
     }
     
-    /* Compact Roadmap Settings */
+    /* Inputs должны иметь возможность выделения */
+    input, textarea {
+      user-select: text;
+      -webkit-user-select: text;
+      -moz-user-select: text;
+      -ms-user-select: text;
+    }
+    
     #roadmapProps {
       background: var(--surface-glass);
       backdrop-filter: blur(20px);
@@ -50,7 +63,6 @@
       transform: rotate(-90deg);
     }
     
-    /* Node Editor - Expanded */
     #nodeProps {
       flex: 1;
       display: flex;
@@ -59,57 +71,110 @@
       min-height: 0;
     }
     
-    .node-color-picker {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
-      gap: 10px;
-      margin-top: 8px;
+    .color-picker-section {
+      display: flex;
+      flex-direction: column;
+      gap: 12px;
     }
     
-    .color-option {
-      width: 48px;
-      height: 48px;
-      border-radius: 12px;
-      cursor: pointer;
-      border: 3px solid transparent;
-      transition: all var(--transition-fast);
-      position: relative;
-      box-shadow: var(--shadow-sm);
+    .color-input-group {
+      display: flex;
+      gap: 12px;
+      align-items: center;
     }
     
-    .color-option:hover {
-      transform: scale(1.1);
-      box-shadow: var(--shadow-md);
-    }
-    
-    .color-option.selected {
-      border-color: white;
-      box-shadow: var(--shadow-glow-primary);
-    }
-    
-    .color-option.selected::after {
-      content: '✓';
-      position: absolute;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
-      color: white;
-      font-size: 20px;
-      font-weight: bold;
-      text-shadow: 0 0 4px rgba(0,0,0,0.5);
-    }
-    
-    .custom-color-input {
-      width: 100%;
-      height: 48px;
+    .color-preview {
+      width: 60px;
+      height: 60px;
       border-radius: 12px;
       border: 2px solid rgba(255, 255, 255, 0.2);
       cursor: pointer;
       transition: all var(--transition-fast);
+      box-shadow: var(--shadow-md);
     }
     
-    .custom-color-input:hover {
-      border-color: var(--accent-primary);
+    .color-preview:hover {
+      transform: scale(1.05);
+      box-shadow: var(--shadow-lg);
+    }
+    
+    .color-controls {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+    }
+    
+    .color-input-wrapper {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+    }
+    
+    .color-input-wrapper input[type="text"] {
+      flex: 1;
+      font-family: monospace;
+      text-transform: uppercase;
+      padding: 10px;
+    }
+    
+    .color-input-wrapper input[type="range"] {
+      flex: 1;
+    }
+    
+    input[type="color"] {
+      width: 100%;
+      height: 42px;
+      border-radius: 8px;
+      border: 2px solid rgba(255, 255, 255, 0.1);
+      cursor: pointer;
+      background: none;
+    }
+    
+    input[type="range"] {
+      width: 100%;
+      height: 6px;
+      border-radius: 3px;
+      background: linear-gradient(to right, transparent, var(--accent-primary));
+      outline: none;
+      -webkit-appearance: none;
+    }
+    
+    input[type="range"]::-webkit-slider-thumb {
+      -webkit-appearance: none;
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+      box-shadow: var(--shadow-md);
+    }
+    
+    input[type="range"]::-moz-range-thumb {
+      width: 18px;
+      height: 18px;
+      border-radius: 50%;
+      background: var(--accent-primary);
+      cursor: pointer;
+      border: none;
+      box-shadow: var(--shadow-md);
+    }
+    
+    /* Improved port styling */
+    .port {
+      cursor: crosshair !important;
+      pointer-events: all !important;
+    }
+    
+    .port.active {
+      fill: var(--accent-success) !important;
+      stroke: var(--accent-success) !important;
+      r: 10 !important;
+      filter: drop-shadow(0 0 8px var(--accent-success)) !important;
+    }
+    
+    .temp-link {
+      pointer-events: none !important;
     }
   </style>
 </head>
@@ -153,7 +218,6 @@
     <div class="properties-panel" id="propPanel">
       <h2>⚙️ RoadHub Editor</h2>
       
-      <!-- Compact Roadmap Settings -->
       <div id="roadmapProps" class="collapsed">
         <div class="collapse-header" onclick="toggleRoadmapSettings()">
           <span style="font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">
@@ -180,7 +244,6 @@
         </div>
       </div>
 
-      <!-- Node Editor - Main Focus -->
       <div id="nodeProps" style="display:none;">
         <div style="padding: var(--spacing-md); background: var(--surface-glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg);">
           <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">
@@ -194,19 +257,19 @@
         </div>
         
         <div class="form-group">
-          <label>Node Color</label>
-          <div class="node-color-picker">
-            <div class="color-option" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="setNodeColor('core')" data-color="core"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);" onclick="setNodeColor('gamedev')" data-color="gamedev"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #764ba2 0%, #8b5cf6 100%);" onclick="setNodeColor('ml')" data-color="ml"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="setNodeColor('crypto')" data-color="crypto"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);" onclick="setNodeColor('engineering')" data-color="engineering"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="setNodeColor('research')" data-color="research"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #ffd166 0%, #f59e0b 100%);" onclick="setNodeColor('warning')" data-color="warning"></div>
-            <div class="color-option" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="setNodeColor('info')" data-color="info"></div>
-          </div>
-          <div style="margin-top: 12px;">
-            <input type="color" id="customColor" class="custom-color-input" onchange="setCustomColor(this.value)" value="#667eea">
+          <label>Node Color & Opacity</label>
+          <div class="color-picker-section">
+            <div class="color-input-group">
+              <div id="colorPreview" class="color-preview"></div>
+              <div class="color-controls">
+                <input type="color" id="nodeColor" onchange="updateNodeColor()" value="#667eea">
+                <div class="color-input-wrapper">
+                  <span style="font-size: 12px; color: var(--text-muted); min-width: 60px;">Opacity:</span>
+                  <input type="range" id="nodeOpacity" min="0" max="100" value="70" oninput="updateNodeColor()">
+                  <span id="opacityValue" style="font-size: 12px; color: var(--text-muted); min-width: 35px;">70%</span>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
 
@@ -221,7 +284,7 @@
         <div class="form-group">
           <label>Prerequisites (Connected Nodes)</label>
           <div id="prerequisites-list" style="max-height: 150px; overflow-y: auto; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;">
-            <p style="color: var(--text-muted); font-size: 12px; margin: 0;">Drag connections to create prerequisites</p>
+            <p style="color: var(--text-muted); font-size: 12px; margin: 0;">Drag from ports to create links</p>
           </div>
         </div>
 
@@ -230,11 +293,10 @@
         </button>
       </div>
       
-      <!-- Help Box -->
       <div class="info-box" id="helpBox" style="margin-top: auto;">
         <p style="margin: 0; font-size: 12px; line-height: 1.6;">
           <b>💡 Quick Tips:</b><br>
-          • Drag from <span style="color: var(--accent-success);">● ports</span> to connect nodes<br>
+          • Click and hold on <span style="color: var(--accent-success);">● port</span> then drag to another port<br>
           • Shift+Click on link to delete<br>
           • Ctrl+N for new node<br>
           • Ctrl+S to save
@@ -246,7 +308,6 @@
   <script src="https://d3js.org/d3.v7.min.js"></script>
   
   <script>
-    // Theme
     function toggleTheme() {
       document.body.classList.toggle('light-theme');
       const isLight = document.body.classList.contains('light-theme');
@@ -263,23 +324,9 @@
       document.getElementById('roadmapProps').classList.toggle('collapsed');
     }
 
-    // CONFIG
     const NODE_W = 200;
     const NODE_H = 90;
 
-    // COLOR MAPPING
-    const COLOR_MAP = {
-      core: { stroke: '#667eea', fill: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2))' },
-      gamedev: { stroke: '#11998e', fill: 'linear-gradient(135deg, rgba(17, 153, 142, 0.2), rgba(56, 239, 125, 0.2))' },
-      ml: { stroke: '#8b5cf6', fill: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.2))' },
-      crypto: { stroke: '#f5576c', fill: 'linear-gradient(135deg, rgba(245, 87, 108, 0.2), rgba(240, 147, 251, 0.2))' },
-      engineering: { stroke: '#ff6b6b', fill: 'linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 111, 0.2))' },
-      research: { stroke: '#f093fb', fill: 'linear-gradient(135deg, rgba(240, 147, 251, 0.2), rgba(245, 87, 108, 0.2))' },
-      warning: { stroke: '#ffd166', fill: 'linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(245, 158, 11, 0.2))' },
-      info: { stroke: '#00f2fe', fill: 'linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2))' }
-    };
-
-    // DATA STATE
     let roadmapData = { 
       id: "custom_map", 
       title: "New Roadmap", 
@@ -290,6 +337,7 @@
     let svg, gNodes, gLinks, zoom, container;
     let selectedNodeId = null;
     let drawingLine = null;
+    let activePort = null;
     
     const PORTS = [
       [NODE_W/2, 0, 'top'],
@@ -302,18 +350,12 @@
       container = document.getElementById('canvas-area');
       svg = d3.select("#svg").attr("width", "100%").attr("height", "100%");
       
-      const defs = svg.append("defs");
-      
-      // Create gradient for each color
-      Object.keys(COLOR_MAP).forEach(key => {
-        const grad = defs.append("linearGradient")
-          .attr("id", `grad-${key}`)
-          .attr("x1", "0%").attr("y1", "0%")
-          .attr("x2", "100%").attr("y2", "100%");
-        
-        grad.append("stop").attr("offset", "0%").attr("stop-color", COLOR_MAP[key].stroke).attr("stop-opacity", 0.3);
-        grad.append("stop").attr("offset", "100%").attr("stop-color", COLOR_MAP[key].stroke).attr("stop-opacity", 0.1);
+      // Prevent text selection on SVG
+      svg.on("mousedown", () => {
+        d3.event?.preventDefault?.();
       });
+      
+      const defs = svg.append("defs");
       
       defs.append("marker")
         .attr("id", "arrow")
@@ -347,13 +389,12 @@
 
       svg.on("mouseup", (e) => {
         if(drawingLine) {
-          const [mx, my] = d3.pointer(e, gContainer.node());
-          const targetNode = findNodeAtPosition(mx, my);
-          if (targetNode && targetNode.id !== drawingLine.sourceId) {
-            finishDrawing(targetNode);
-          } else {
+          // If mouseup not on a port, cancel drawing
+          if (!d3.select(e.target).classed('port')) {
+            console.log('Cancelled drawing - mouseup not on port');
             drawingLine = null;
             tempPath.attr("d", "");
+            gNodes.selectAll('.port').classed('active', false);
           }
         }
       });
@@ -363,10 +404,28 @@
       updateCounts();
     }
 
-    function findNodeAtPosition(x, y) {
-      return roadmapData.nodes.find(n => {
-        return x >= n.x && x <= n.x + NODE_W && y >= n.y && y <= n.y + NODE_H;
-      });
+    function hexToRgba(hex, opacity) {
+      const r = parseInt(hex.slice(1, 3), 16);
+      const g = parseInt(hex.slice(3, 5), 16);
+      const b = parseInt(hex.slice(5, 7), 16);
+      return `rgba(${r}, ${g}, ${b}, ${opacity / 100})`;
+    }
+
+    function updateNodeColor() {
+      if(!selectedNodeId) return;
+      
+      const color = document.getElementById('nodeColor').value;
+      const opacity = document.getElementById('nodeOpacity').value;
+      const rgba = hexToRgba(color, opacity);
+      
+      document.getElementById('opacityValue').textContent = opacity + '%';
+      document.getElementById('colorPreview').style.background = rgba;
+      
+      const node = roadmapData.nodes.find(x => x.id === selectedNodeId);
+      node.color = color;
+      node.opacity = parseFloat(opacity) / 100;
+      
+      render();
     }
 
     function render() {
@@ -396,7 +455,10 @@
 
       const nodeEnter = nodeSel.enter().append("g")
         .attr("class", "node-group")
-        .call(d3.drag().on("start", dragStart).on("drag", dragging).on("end", dragEnd));
+        .call(d3.drag()
+          .on("start", dragStart)
+          .on("drag", dragging)
+          .on("end", dragEnd));
 
       nodeEnter.append("rect")
         .attr("class", "body")
@@ -414,15 +476,33 @@
         .style("font-size", "14px")
         .style("font-weight", "600");
 
-      PORTS.forEach(p => {
+      // Port creation with proper data binding
+      PORTS.forEach((p, idx) => {
         nodeEnter.append("circle")
           .attr("class", "port")
           .attr("cx", p[0])
           .attr("cy", p[1])
-          .attr("r", 6)
-          .on("mousedown", (e, d) => {
+          .attr("r", 8)
+          .style("pointer-events", "all")
+          .on("mousedown", function(e, nodeData) {
             e.stopPropagation();
-            startDrawing(e, d, p);
+            e.preventDefault();
+            startDrawing(nodeData, p);
+          })
+          .on("mouseup", function(e, nodeData) {
+            e.stopPropagation();
+            e.preventDefault();
+            if (drawingLine) {
+              finishDrawing(nodeData);
+            }
+          })
+          .on("mouseenter", function() {
+            if (drawingLine) {
+              d3.select(this).classed('active', true);
+            }
+          })
+          .on("mouseleave", function() {
+            d3.select(this).classed('active', false);
           });
       });
 
@@ -432,20 +512,11 @@
       
       allNodes.select("rect.body")
         .style("fill", d => {
-          const group = d.group || 'core';
-          const customColor = d.customColor;
-          if (customColor) {
-            return customColor;
-          }
-          return `url(#grad-${group})`;
+          const color = d.color || '#667eea';
+          const opacity = d.opacity !== undefined ? d.opacity : 0.7;
+          return hexToRgba(color, opacity * 100);
         })
-        .style("stroke", d => {
-          const customColor = d.customColor;
-          if (customColor) {
-            return customColor;
-          }
-          return COLOR_MAP[d.group || 'core'].stroke;
-        });
+        .style("stroke", d => d.color || '#667eea');
       
       allNodes.select("text").text(d => {
         const maxLen = 22;
@@ -453,8 +524,10 @@
       });
       
       allNodes.on("click", (e, d) => {
-        e.stopPropagation();
-        selectNode(d.id);
+        if (!drawingLine) {
+          e.stopPropagation();
+          selectNode(d.id);
+        }
       });
       
       updateCounts();
@@ -479,35 +552,77 @@
         : `M${start.x},${start.y} C${start.x + dist},${start.y} ${end.x - dist},${end.y} ${end.x},${end.y}`;
     }
 
-    function startDrawing(e, d, port) {
-      drawingLine = { sourceId: d.id, startX: d.x + port[0], startY: d.y + port[1] };
+    function startDrawing(nodeData, port) {
+      const node = roadmapData.nodes.find(n => n.id === nodeData.id);
+      if (!node) return;
+      
+      drawingLine = { 
+        sourceId: node.id, 
+        startX: node.x + port[0], 
+        startY: node.y + port[1] 
+      };
+      
+      console.log('Started drawing from node:', node.id);
     }
 
-    function finishDrawing(targetNode) {
-      if (!drawingLine || drawingLine.sourceId === targetNode.id) {
+    function finishDrawing(targetNodeData) {
+      if (!drawingLine) return;
+      
+      const targetNode = roadmapData.nodes.find(n => n.id === targetNodeData.id);
+      if (!targetNode) {
+        console.log('Target node not found');
         drawingLine = null;
         d3.select(".temp-link").attr("d", "");
         return;
       }
-      const targetNodeData = roadmapData.nodes.find(n => n.id === targetNode.id);
-      if (!targetNodeData.prerequisites) targetNodeData.prerequisites = [];
-      if (!targetNodeData.prerequisites.includes(drawingLine.sourceId)) {
-        targetNodeData.prerequisites.push(drawingLine.sourceId);
-        render();
+      
+      if (drawingLine.sourceId === targetNode.id) {
+        console.log('Cannot connect node to itself');
+        drawingLine = null;
+        d3.select(".temp-link").attr("d", "");
+        return;
       }
+      
+      if (!targetNode.prerequisites) targetNode.prerequisites = [];
+      
+      if (!targetNode.prerequisites.includes(drawingLine.sourceId)) {
+        targetNode.prerequisites.push(drawingLine.sourceId);
+        console.log('Created link from', drawingLine.sourceId, 'to', targetNode.id);
+        render();
+      } else {
+        console.log('Link already exists');
+      }
+      
       drawingLine = null;
       d3.select(".temp-link").attr("d", "");
+      gNodes.selectAll('.port').classed('active', false);
     }
 
-    function dragStart(e, d) { d3.select(this).raise(); selectNode(d.id); }
-    function dragging(e, d) { d.x = e.x; d.y = e.y; d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`); render(); }
+    function dragStart(e, d) { 
+      d3.select(this).raise(); 
+      selectNode(d.id); 
+    }
+    
+    function dragging(e, d) { 
+      d.x = e.x; 
+      d.y = e.y; 
+      d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`); 
+      render(); 
+    }
+    
     function dragEnd(e, d) {}
 
     function addNewNode() {
       const id = "node_" + Date.now();
       roadmapData.nodes.push({
-        id, title: "New Node", group: "core", content: "# New Node\n\nDescription...",
-        prerequisites: [], x: container.clientWidth / 2 - NODE_W/2, y: container.clientHeight / 2 - NODE_H/2
+        id, 
+        title: "New Node", 
+        color: '#667eea',
+        opacity: 0.7,
+        content: "# New Node\n\nDescription...",
+        prerequisites: [], 
+        x: container.clientWidth / 2 - NODE_W/2, 
+        y: container.clientHeight / 2 - NODE_H/2
       });
       render();
       selectNode(id);
@@ -526,37 +641,16 @@
       document.getElementById('nodeContent').value = n.content || '';
       
       // Update color picker
-      document.querySelectorAll('.color-option').forEach(el => {
-        el.classList.remove('selected');
-        if (el.dataset.color === n.group) el.classList.add('selected');
-      });
+      const color = n.color || '#667eea';
+      const opacity = (n.opacity !== undefined ? n.opacity : 0.7) * 100;
       
-      if (n.customColor) {
-        document.getElementById('customColor').value = n.customColor;
-      }
+      document.getElementById('nodeColor').value = color;
+      document.getElementById('nodeOpacity').value = opacity;
+      document.getElementById('opacityValue').textContent = Math.round(opacity) + '%';
+      document.getElementById('colorPreview').style.background = hexToRgba(color, opacity);
       
       render();
       updatePrerequisitesList();
-    }
-    
-    function setNodeColor(group) {
-      if(!selectedNodeId) return;
-      const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
-      n.group = group;
-      delete n.customColor; // Remove custom color
-      document.querySelectorAll('.color-option').forEach(el => {
-        el.classList.remove('selected');
-        if (el.dataset.color === group) el.classList.add('selected');
-      });
-      render();
-    }
-    
-    function setCustomColor(color) {
-      if(!selectedNodeId) return;
-      const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
-      n.customColor = color;
-      document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
-      render();
     }
 
     function updatePrerequisitesList() {
