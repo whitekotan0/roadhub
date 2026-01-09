@@ -5,24 +5,29 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>RoadHub - Viewer</title>
   <link rel="stylesheet" href="style.css">
-  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀️</button>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+    </svg>
+  </button>
 
   <div class="toolbar" id="toolbar">
     <a href="index.html" style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
-      <span>←</span>
+      <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+        <path d="M8 0L0 8l8 8 1.5-1.5L3 8l6.5-6.5z"/>
+      </svg>
       <span>Home</span>
     </a>
     <span style="color: var(--text-muted); opacity: 0.5;">|</span>
     <h3 id="map-title">Loading...</h3>
     <span style="color: var(--text-muted); opacity: 0.5;">|</span>
     <button onclick="resetView()" class="btn-glass" style="padding: 10px 16px; border-radius: 8px;" title="Center view">
-      🎯 Center
+      Center View
     </button>
     <button onclick="clearProgress()" class="btn-glass" style="padding: 10px 16px; border-radius: 8px;" title="Reset progress">
-      🗑️ Reset
+      Reset Progress
     </button>
   </div>
 
@@ -37,10 +42,14 @@
   </div>
 
   <div class="panel" id="panel">
-    <button class="close-btn" onclick="closePanel()" aria-label="Close">×</button>
+    <button class="close-btn" onclick="closePanel()" aria-label="Close">
+      <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+        <path d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z"/>
+      </svg>
+    </button>
     <h2 id="p-title">Loading...</h2>
     <div class="panel-content" id="p-content"></div>
-    <button id="p-toggle" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 24px;">
+    <button id="p-toggle" class="btn btn-success" style="width: 100%; justify-content: center; margin-top: 24px;">
       Mark as Completed
     </button>
   </div>

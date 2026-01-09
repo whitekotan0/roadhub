@@ -15,15 +15,22 @@ function toggleTheme() {
   document.body.classList.toggle('light-theme');
   const isLight = document.body.classList.contains('light-theme');
   localStorage.setItem('theme', isLight ? 'light' : 'dark');
-  document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
-  
+  updateThemeIcon();
   if (svg) render();
+}
+
+function updateThemeIcon() {
+  const isLight = document.body.classList.contains('light-theme');
+  const btn = document.getElementById('theme-btn');
+  btn.innerHTML = isLight ? 
+    '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>' :
+    '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>';
 }
 
 if(localStorage.getItem('theme') === 'light') {
   document.body.classList.add('light-theme');
-  document.getElementById('theme-btn').textContent = '🌙';
 }
+updateThemeIcon();
 
 // --- LOAD MAP ---
 async function loadMap() {
@@ -301,24 +308,11 @@ function toggleNode(id) {
 function openPanel(d) {
   document.getElementById('p-title').textContent = d.title;
   
-  const content = d.content || `# ${d.title}\n\nNo description available.`;
-  try {
-    if (typeof marked !== 'undefined') {
-      document.getElementById('p-content').innerHTML = marked.parse(content);
-    } else {
-      document.getElementById('p-content').innerHTML = content
-        .replace(/\n/g, '<br>')
-        .replace(/#{3} (.*)/g, '<h3>$1</h3>')
-        .replace(/#{2} (.*)/g, '<h2>$1</h2>')
-        .replace(/#{1} (.*)/g, '<h1>$1</h1>')
-        .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
-        .replace(/\*(.*?)\*/g, '<em>$1</em>')
-        .replace(/- (.*)/g, '<li>$1</li>');
-    }
-  } catch (e) {
-    console.error("Markdown parsing error:", e);
-    document.getElementById('p-content').innerHTML = `<p>${content}</p>`;
-  }
+  // Simple text display, no markdown
+  const content = d.content || 'No description available.';
+  document.getElementById('p-content').innerHTML = '<p style="white-space: pre-wrap;">' + 
+    content.replace(/</g, '&lt;').replace(/>/g, '&gt;') + 
+    '</p>';
   
   const btn = document.getElementById('p-toggle');
   const newBtn = btn.cloneNode(true);
@@ -332,7 +326,7 @@ function openPanel(d) {
 function updatePanelBtn(id) {
   const btn = document.getElementById('p-toggle');
   const done = isDone(id);
-  btn.textContent = done ? "✓ Mark as Incomplete" : "✓ Mark as Completed";
+  btn.textContent = done ? "Mark as Incomplete" : "Mark as Completed";
   btn.className = done ? "btn btn-danger" : "btn btn-success";
 }
 

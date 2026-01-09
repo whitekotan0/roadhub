@@ -179,25 +179,32 @@
   </style>
 </head>
 <body>
-  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀️</button>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+    </svg>
+  </button>
   
   <div class="editor-layout">
     <div id="canvas-area">
       <div class="editor-toolbar">
         <a href="index.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; font-weight: 600;">
-          ← Home
+          <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0L0 8l8 8 1.5-1.5L3 8l6.5-6.5z"/>
+          </svg>
+          <span>Home</span>
         </a>
         <button onclick="addNewNode()" class="btn btn-primary" style="padding: 10px 20px;">
-          + Node
+          Add Node
         </button>
         <button onclick="centerView()" class="btn btn-glass" style="padding: 10px 20px;">
-          🎯
+          Center
         </button>
         <button onclick="downloadJSON()" class="btn btn-success" style="padding: 10px 20px;">
-          💾 Save
+          Save
         </button>
         <button onclick="loadJSON()" class="btn btn-glass" style="padding: 10px 20px;">
-          📂 Load
+          Load
         </button>
         <input type="file" id="load-input" accept=".json" style="display: none;" onchange="handleFileLoad(this)">
       </div>
@@ -216,7 +223,7 @@
     </div>
 
     <div class="properties-panel" id="propPanel">
-      <h2>⚙️ RoadHub Editor</h2>
+      <h2>RoadHub Editor</h2>
       
       <div id="roadmapProps" class="collapsed">
         <div class="collapse-header" onclick="toggleRoadmapSettings()">
@@ -247,7 +254,7 @@
       <div id="nodeProps" style="display:none;">
         <div style="padding: var(--spacing-md); background: var(--surface-glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg);">
           <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">
-            ✏️ Edit Node
+            Edit Node
           </h3>
         </div>
         
@@ -274,32 +281,29 @@
         </div>
 
         <div class="form-group" style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
-          <label>Description (Markdown)</label>
-          <textarea id="nodeContent" oninput="updateActiveNode()" placeholder="# Heading&#10;&#10;Node description...&#10;&#10;- Point 1&#10;- Point 2" style="flex: 1; min-height: 200px; font-size: 14px; line-height: 1.6;"></textarea>
-          <small style="color: var(--text-muted); font-size: 11px; margin-top: 6px;">
-            Supports Markdown: # headers, **bold**, *italic*, - lists
-          </small>
+          <label>Description</label>
+          <textarea id="nodeContent" oninput="updateActiveNode()" placeholder="Enter description..." style="flex: 1; min-height: 200px; font-size: 14px; line-height: 1.6;"></textarea>
         </div>
         
         <div class="form-group">
-          <label>Prerequisites (Connected Nodes)</label>
-          <div id="prerequisites-list" style="max-height: 150px; overflow-y: auto; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;">
-            <p style="color: var(--text-muted); font-size: 12px; margin: 0;">Drag from ports to create links</p>
+          <label>Connected From</label>
+          <div id="prerequisites-list" style="max-height: 120px; overflow-y: auto; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;">
+            <p style="color: var(--text-muted); font-size: 12px; margin: 0;">No connections</p>
           </div>
         </div>
 
         <button onclick="deleteSelectedNode()" class="btn btn-danger" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px;">
-          🗑️ Delete Node
+          Delete Node
         </button>
       </div>
       
       <div class="info-box" id="helpBox" style="margin-top: auto;">
         <p style="margin: 0; font-size: 12px; line-height: 1.6;">
-          <b>💡 Quick Tips:</b><br>
-          • Click and hold on <span style="color: var(--accent-success);">● port</span> then drag to another port<br>
-          • Shift+Click on link to delete<br>
-          • Ctrl+N for new node<br>
-          • Ctrl+S to save
+          <b>Quick Tips:</b><br>
+          • Drag from port to port to connect<br>
+          • Click on line to delete it<br>
+          • Ctrl+N - new node<br>
+          • Ctrl+S - save
         </p>
       </div>
     </div>
@@ -312,13 +316,21 @@
       document.body.classList.toggle('light-theme');
       const isLight = document.body.classList.contains('light-theme');
       localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+      updateThemeIcon();
+    }
+    
+    function updateThemeIcon() {
+      const isLight = document.body.classList.contains('light-theme');
+      const btn = document.getElementById('theme-btn');
+      btn.innerHTML = isLight ? 
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>' :
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>';
     }
     
     if(localStorage.getItem('theme') === 'light') {
       document.body.classList.add('light-theme');
-      document.getElementById('theme-btn').textContent = '🌙';
     }
+    updateThemeIcon();
     
     function toggleRoadmapSettings() {
       document.getElementById('roadmapProps').classList.toggle('collapsed');
@@ -338,6 +350,7 @@
     let selectedNodeId = null;
     let drawingLine = null;
     let activePort = null;
+    let selectedLink = null;
     
     const PORTS = [
       [NODE_W/2, 0, 'top'],
@@ -446,7 +459,11 @@
       
       linkSel.enter().append("path")
         .attr("class", "link")
-        .on("click", (e, d) => { if (e.shiftKey) deleteLink(d); })
+        .style("cursor", "pointer")
+        .on("click", function(e, d) { 
+          e.stopPropagation();
+          selectLink(this, d);
+        })
         .on("contextmenu", (e, d) => { e.preventDefault(); deleteLink(d); })
         .merge(linkSel)
         .attr("d", d => calculateBezier(d.src, d.tgt, d.sourcePort, d.targetPort));
@@ -655,7 +672,7 @@
         title: "New Node", 
         color: '#667eea',
         opacity: 0.7,
-        content: "# New Node\n\nDescription...",
+        content: "",
         prerequisites: [], 
         x: container.clientWidth / 2 - NODE_W/2, 
         y: container.clientHeight / 2 - NODE_H/2
@@ -699,7 +716,7 @@
         return { id, title: prereqNode ? prereqNode.title : id };
       });
       if (prereqs.length === 0) {
-        list.innerHTML = '<p style="color: var(--text-muted); font-size: 12px; margin: 0;">No prerequisites</p>';
+        list.innerHTML = '<p style="color: var(--text-muted); font-size: 12px; margin: 0;">No connections</p>';
       } else {
         list.innerHTML = prereqs.map((p, idx) => {
           return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
@@ -740,6 +757,25 @@
       render();
     }
 
+    function selectLink(linkElement, data) {
+      // Deselect previous
+      if (selectedLink) {
+        d3.select(selectedLink).classed('selected', false);
+      }
+      
+      selectedLink = linkElement;
+      d3.select(linkElement).classed('selected', true);
+      
+      // Show delete button or just delete immediately
+      if (confirm('Delete this connection?')) {
+        deleteLink(data);
+        selectedLink = null;
+      } else {
+        d3.select(linkElement).classed('selected', false);
+        selectedLink = null;
+      }
+    }
+    
     function deleteLink(data) {
       const tgt = roadmapData.nodes.find(n => n.id === data.tgt.id);
       if (tgt?.prerequisites) {

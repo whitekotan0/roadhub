@@ -9,34 +9,36 @@
   <meta name="theme-color" content="#667eea">
 </head>
 <body>
-  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀️</button>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">
+    <svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor">
+      <path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/>
+    </svg>
+  </button>
 
   <div class="hero">
     <div class="hero-content">
-      <h1>🚀 RoadHub</h1>
-      <p style="font-size: 1.5rem; margin-bottom: 16px; font-weight: 600;">Transform Learning Into an Adventure</p>
+      <h1>RoadHub</h1>
       <p class="subtitle">
-        Create stunning, interactive roadmaps that turn complex subjects into beautiful skill trees. 
-        Track progress, visualize dependencies, and master any topic.
+        Create stunning, interactive roadmaps with beautiful visualizations and track your progress like never before.
       </p>
       
       <div class="cta-buttons">
         <button onclick="document.getElementById('file-input').click()" class="btn btn-primary">
-          📂 Open Roadmap
+          Open Roadmap
         </button>
         <input type="file" id="file-input" accept=".json" style="display: none;" onchange="loadUserFile(this)">
         <a href="editor.html">
           <button class="btn btn-glass">
-            ✨ Create New
+            Create New
           </button>
         </a>
       </div>
       
       <div class="feature-tags">
-        <span class="tag">🎨 Drag & Drop Editor</span>
-        <span class="tag">📊 Progress Tracking</span>
-        <span class="tag">🌓 Dark/Light Mode</span>
-        <span class="tag">🔒 Privacy First</span>
+        <span class="tag">Drag & Drop Editor</span>
+        <span class="tag">Progress Tracking</span>
+        <span class="tag">Dark/Light Mode</span>
+        <span class="tag">Privacy First</span>
       </div>
     </div>
   </div>
@@ -65,13 +67,22 @@
       document.body.classList.toggle('light-theme');
       const isLight = document.body.classList.contains('light-theme');
       localStorage.setItem('theme', isLight ? 'light' : 'dark');
-      document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
+      updateThemeIcon();
+    }
+    
+    function updateThemeIcon() {
+      const isLight = document.body.classList.contains('light-theme');
+      const btn = document.getElementById('theme-btn');
+      btn.innerHTML = isLight ? 
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M17.293 13.293A8 8 0 016.707 2.707a8.001 8.001 0 1010.586 10.586z"/></svg>' :
+        '<svg width="20" height="20" viewBox="0 0 20 20" fill="currentColor"><path d="M10 2a1 1 0 011 1v1a1 1 0 11-2 0V3a1 1 0 011-1zm4 8a4 4 0 11-8 0 4 4 0 018 0zm-.464 4.95l.707.707a1 1 0 001.414-1.414l-.707-.707a1 1 0 00-1.414 1.414zm2.12-10.607a1 1 0 010 1.414l-.706.707a1 1 0 11-1.414-1.414l.707-.707a1 1 0 011.414 0zM17 11a1 1 0 100-2h-1a1 1 0 100 2h1zm-7 4a1 1 0 011 1v1a1 1 0 11-2 0v-1a1 1 0 011-1zM5.05 6.464A1 1 0 106.465 5.05l-.708-.707a1 1 0 00-1.414 1.414l.707.707zm1.414 8.486l-.707.707a1 1 0 01-1.414-1.414l.707-.707a1 1 0 011.414 1.414zM4 11a1 1 0 100-2H3a1 1 0 000 2h1z"/></svg>';
     }
     
     // Apply saved theme
     if(localStorage.getItem('theme') === 'light') {
       toggleTheme();
     }
+    updateThemeIcon();
 
     // Load directory
     fetch('directory.json')
@@ -82,17 +93,15 @@
         if (data.length === 0) {
           grid.innerHTML = `
             <div style="text-align: center; grid-column: 1 / -1; padding: 80px 40px;">
-              <div style="font-size: 72px; margin-bottom: 24px; opacity: 0.5;">📚</div>
+              <div style="font-size: 48px; margin-bottom: 24px; opacity: 0.3; font-weight: 700;">NO DATA</div>
               <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary);">
                 No Roadmaps Yet
               </h2>
               <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 1.125rem;">
-                Create your first roadmap using our powerful editor!
+                Create your first roadmap using our powerful editor
               </p>
               <a href="editor.html">
-                <button class="btn btn-primary">
-                  ✨ Create Roadmap
-                </button>
+                <button class="btn btn-primary">Create Roadmap</button>
               </a>
             </div>
           `;
@@ -104,7 +113,6 @@
           const mapP = pData[map.id || map.file] || {};
           const completed = Object.keys(mapP).length;
           
-          // Gradient variations
           const gradients = [
             'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
             'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
@@ -115,7 +123,7 @@
           
           return `
           <a href="viewer.html?map=${map.file}" class="card" style="animation-delay: ${index * 0.1}s;">
-            <div class="card-icon">${map.icon || '📚'}</div>
+            <div style="font-size: 48px; margin-bottom: 16px; font-weight: 800; opacity: 0.1;">${map.icon || '#'}</div>
             <h3>${map.title}</h3>
             <p>${map.description || 'Explore this learning path'}</p>
             <div class="card-footer">
@@ -123,7 +131,7 @@
                 ${map.difficulty || 'Intermediate'}
               </span>
               <span class="status ${completed > 0 ? 'started' : ''}">
-                ${completed > 0 ? 'In Progress' : 'Start →'}
+                ${completed > 0 ? 'In Progress' : 'Start'}
               </span>
             </div>
           </a>
@@ -133,7 +141,7 @@
       .catch(err => {
         document.getElementById('grid').innerHTML = `
           <div style="text-align: center; grid-column: 1 / -1; padding: 80px 40px;">
-            <div style="font-size: 72px; margin-bottom: 24px;">⚠️</div>
+            <div style="font-size: 48px; margin-bottom: 24px; opacity: 0.3; font-weight: 700;">ERROR</div>
             <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--accent-danger);">
               Failed to Load
             </h2>
