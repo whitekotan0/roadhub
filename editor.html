@@ -356,18 +356,7 @@
       });
       
       const defs = svg.append("defs");
-      
-      defs.append("marker")
-        .attr("id", "arrow")
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", 5)
-        .attr("refY", 0)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 6)
-        .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", "var(--accent-primary)");
+      // Убрали стрелки (треугольники)
 
       const gContainer = svg.append("g");
       gLinks = gContainer.append("g");
@@ -432,23 +421,35 @@
       const links = [];
       roadmapData.nodes.forEach(n => {
         if(n.prerequisites) {
-          n.prerequisites.forEach(pId => {
-            const src = roadmapData.nodes.find(x => x.id === pId);
-            if(src) links.push({ src, tgt: n });
+          n.prerequisites.forEach(p => {
+            let sourceId, sourcePort, targetPort;
+            
+            // Поддержка старого и нового формата
+            if (typeof p === 'object') {
+              sourceId = p.nodeId;
+              sourcePort = p.sourcePort;
+              targetPort = p.targetPort;
+            } else {
+              sourceId = p;
+              sourcePort = null;
+              targetPort = null;
+            }
+            
+            const src = roadmapData.nodes.find(x => x.id === sourceId);
+            if(src) links.push({ src, tgt: n, sourcePort, targetPort });
           });
         }
       });
 
-      const linkSel = gLinks.selectAll(".link").data(links, d => d.src.id + "-" + d.tgt.id);
+      const linkSel = gLinks.selectAll(".link").data(links, d => d.src.id + "-" + d.tgt.id + "-" + (d.sourcePort || 'auto'));
       linkSel.exit().remove();
       
       linkSel.enter().append("path")
         .attr("class", "link")
-        .attr("marker-end", "url(#arrow)")
         .on("click", (e, d) => { if (e.shiftKey) deleteLink(d); })
         .on("contextmenu", (e, d) => { e.preventDefault(); deleteLink(d); })
         .merge(linkSel)
-        .attr("d", d => calculateBezier(d.src, d.tgt));
+        .attr("d", d => calculateBezier(d.src, d.tgt, d.sourcePort, d.targetPort));
 
       const nodeSel = gNodes.selectAll(".node-group").data(roadmapData.nodes, d => d.id);
       nodeSel.exit().remove();
@@ -483,6 +484,7 @@
           .attr("cx", p[0])
           .attr("cy", p[1])
           .attr("r", 8)
+          .attr("data-port", p[2]) // Добавляем имя порта
           .style("pointer-events", "all")
           .on("mousedown", function(e, nodeData) {
             e.stopPropagation();
@@ -493,7 +495,7 @@
             e.stopPropagation();
             e.preventDefault();
             if (drawingLine) {
-              finishDrawing(nodeData);
+              finishDrawing(nodeData, p);
             }
           })
           .on("mouseenter", function() {
@@ -533,20 +535,43 @@
       updateCounts();
     }
 
-    function calculateBezier(src, tgt) {
-      const sx = src.x + NODE_W/2, sy = src.y + NODE_H/2;
-      const tx = tgt.x + NODE_W/2, ty = tgt.y + NODE_H/2;
-      const dx = tx - sx, dy = ty - sy;
+    function calculateBezier(src, tgt, sourcePort, targetPort) {
+      // Если порты указаны, используем их. Иначе автоматический расчет
+      let start, end;
       
-      let start = {x: sx, y: src.y + NODE_H}, end = {x: tx, y: tgt.y};
-      if (Math.abs(dx) > Math.abs(dy)) {
-        start = dx > 0 ? {x: src.x + NODE_W, y: sy} : {x: src.x, y: sy};
-        end = dx > 0 ? {x: tgt.x, y: ty} : {x: tgt.x + NODE_W, y: ty};
-      } else {
-        start = dy > 0 ? {x: sx, y: src.y + NODE_H} : {x: sx, y: src.y};
-        end = dy > 0 ? {x: tx, y: tgt.y} : {x: tx, y: tgt.y + NODE_H};
+      if (sourcePort && targetPort) {
+        // Используем сохраненные порты
+        const srcPortData = PORTS.find(p => p[2] === sourcePort);
+        const tgtPortData = PORTS.find(p => p[2] === targetPort);
+        
+        if (srcPortData && tgtPortData) {
+          start = { x: src.x + srcPortData[0], y: src.y + srcPortData[1] };
+          end = { x: tgt.x + tgtPortData[0], y: tgt.y + tgtPortData[1] };
+        }
       }
+      
+      // Фоллбэк на автоматический расчет если портов нет
+      if (!start || !end) {
+        const sx = src.x + NODE_W/2, sy = src.y + NODE_H/2;
+        const tx = tgt.x + NODE_W/2, ty = tgt.y + NODE_H/2;
+        const dx = tx - sx, dy = ty - sy;
+        
+        start = {x: sx, y: src.y + NODE_H};
+        end = {x: tx, y: tgt.y};
+        
+        if (Math.abs(dx) > Math.abs(dy)) {
+          start = dx > 0 ? {x: src.x + NODE_W, y: sy} : {x: src.x, y: sy};
+          end = dx > 0 ? {x: tgt.x, y: ty} : {x: tgt.x + NODE_W, y: ty};
+        } else {
+          start = dy > 0 ? {x: sx, y: src.y + NODE_H} : {x: sx, y: src.y};
+          end = dy > 0 ? {x: tx, y: tgt.y} : {x: tx, y: tgt.y + NODE_H};
+        }
+      }
+      
+      const dx = end.x - start.x;
+      const dy = end.y - start.y;
       const dist = Math.sqrt(dx*dx + dy*dy) * 0.5;
+      
       return Math.abs(dy) > Math.abs(dx) 
         ? `M${start.x},${start.y} C${start.x},${start.y + dist} ${end.x},${end.y - dist} ${end.x},${end.y}`
         : `M${start.x},${start.y} C${start.x + dist},${start.y} ${end.x - dist},${end.y} ${end.x},${end.y}`;
@@ -557,15 +582,16 @@
       if (!node) return;
       
       drawingLine = { 
-        sourceId: node.id, 
+        sourceId: node.id,
+        sourcePort: port, // Сохраняем порт источника
         startX: node.x + port[0], 
         startY: node.y + port[1] 
       };
       
-      console.log('Started drawing from node:', node.id);
+      console.log('Started drawing from node:', node.id, 'port:', port[2]);
     }
 
-    function finishDrawing(targetNodeData) {
+    function finishDrawing(targetNodeData, targetPort) {
       if (!drawingLine) return;
       
       const targetNode = roadmapData.nodes.find(n => n.id === targetNodeData.id);
@@ -585,8 +611,18 @@
       
       if (!targetNode.prerequisites) targetNode.prerequisites = [];
       
-      if (!targetNode.prerequisites.includes(drawingLine.sourceId)) {
-        targetNode.prerequisites.push(drawingLine.sourceId);
+      // Проверяем, нет ли уже такой связи
+      const existingLink = targetNode.prerequisites.find(p => 
+        typeof p === 'object' ? p.nodeId === drawingLine.sourceId : p === drawingLine.sourceId
+      );
+      
+      if (!existingLink) {
+        // Сохраняем информацию о портах
+        targetNode.prerequisites.push({
+          nodeId: drawingLine.sourceId,
+          sourcePort: drawingLine.sourcePort[2], // название порта (top, right, bottom, left)
+          targetPort: targetPort[2]
+        });
         console.log('Created link from', drawingLine.sourceId, 'to', targetNode.id);
         render();
       } else {
@@ -657,27 +693,27 @@
       const node = roadmapData.nodes.find(n => n.id === selectedNodeId);
       if (!node) return;
       const list = document.getElementById('prerequisites-list');
-      const prereqs = (node.prerequisites || []).map(pId => {
-        const prereqNode = roadmapData.nodes.find(n => n.id === pId);
-        return prereqNode ? prereqNode.title : pId;
+      const prereqs = (node.prerequisites || []).map(p => {
+        const id = typeof p === 'object' ? p.nodeId : p;
+        const prereqNode = roadmapData.nodes.find(n => n.id === id);
+        return { id, title: prereqNode ? prereqNode.title : id };
       });
       if (prereqs.length === 0) {
         list.innerHTML = '<p style="color: var(--text-muted); font-size: 12px; margin: 0;">No prerequisites</p>';
       } else {
-        list.innerHTML = prereqs.map((title, idx) => {
-          const pId = node.prerequisites[idx];
+        list.innerHTML = prereqs.map((p, idx) => {
           return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
-            <span style="font-size: 13px; color: var(--text-primary);">${title}</span>
-            <button onclick="removePrerequisite('${pId}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;">×</button>
+            <span style="font-size: 13px; color: var(--text-primary);">${p.title}</span>
+            <button onclick="removePrerequisite(${idx})" class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;">×</button>
           </div>`;
         }).join('');
       }
     }
 
-    function removePrerequisite(pId) {
+    function removePrerequisite(idx) {
       const node = roadmapData.nodes.find(n => n.id === selectedNodeId);
       if (node?.prerequisites) {
-        node.prerequisites = node.prerequisites.filter(id => id !== pId);
+        node.prerequisites.splice(idx, 1);
         render();
         updatePrerequisitesList();
       }
@@ -707,7 +743,12 @@
     function deleteLink(data) {
       const tgt = roadmapData.nodes.find(n => n.id === data.tgt.id);
       if (tgt?.prerequisites) {
-        tgt.prerequisites = tgt.prerequisites.filter(pid => pid !== data.src.id);
+        tgt.prerequisites = tgt.prerequisites.filter(p => {
+          if (typeof p === 'object') {
+            return p.nodeId !== data.src.id;
+          }
+          return p !== data.src.id;
+        });
         render();
         if (selectedNodeId === data.tgt.id) updatePrerequisitesList();
       }
