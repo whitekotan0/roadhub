@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoadMaths - Dynamic JSON Roadmap</title>
+  <title>RoadMap Community</title>
   <style>
     :root {
       --bg-color: #0f172a;
@@ -23,19 +23,19 @@
       font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
       background: var(--bg-color);
       color: var(--text-main);
-      overflow: hidden; /* Canvas pans instead of scroll */
+      overflow: hidden;
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
 
-    /* --- Toolbar --- */
+    /* --- Toolbar (Left) --- */
     #toolbar {
       position: absolute;
       top: 20px;
       left: 20px;
       z-index: 100;
-      background: rgba(30, 41, 59, 0.8);
+      background: rgba(30, 41, 59, 0.9);
       backdrop-filter: blur(8px);
       padding: 10px 20px;
       border-radius: 12px;
@@ -46,7 +46,25 @@
       box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     }
 
-    h1 { font-size: 18px; font-weight: 700; color: #60a5fa; }
+    /* --- Stats Panel (Right) --- */
+    #stats-panel {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      z-index: 100;
+      background: rgba(30, 41, 59, 0.9);
+      backdrop-filter: blur(8px);
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--node-border);
+      text-align: right;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+    }
+
+    .stats-value { font-size: 20px; font-weight: bold; color: #10b981; }
+    .stats-label { font-size: 12px; color: #94a3b8; }
+
+    h1 { font-size: 18px; font-weight: 700; color: #60a5fa; margin: 0; }
 
     button {
       background: #334155;
@@ -61,15 +79,11 @@
     button:hover { background: #475569; }
     button.danger:hover { background: #ef4444; }
 
-    /* --- SVG Canvas --- */
-    #canvas-container {
-      width: 100%;
-      height: 100%;
-      cursor: grab;
-    }
+    /* --- Canvas --- */
+    #canvas-container { width: 100%; height: 100%; cursor: grab; }
     #canvas-container:active { cursor: grabbing; }
 
-    /* --- D3 Elements Styles --- */
+    /* --- D3 Styles --- */
     .node rect {
       fill: var(--node-bg);
       stroke: var(--node-border);
@@ -77,17 +91,9 @@
       rx: 6;
       transition: all 0.3s ease;
     }
-
-    .node:hover rect {
-      stroke: var(--node-hover);
-      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
-    }
-
-    .node.completed rect {
-      fill: var(--completed-bg);
-      stroke: var(--completed-border);
-    }
-
+    .node:hover rect { stroke: var(--node-hover); filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5)); }
+    .node.completed rect { fill: var(--completed-bg); stroke: var(--completed-border); }
+    
     .node text {
       fill: var(--text-main);
       font-size: 14px;
@@ -107,10 +113,8 @@
     /* --- Side Panel --- */
     #panel {
       position: fixed;
-      top: 0;
-      right: -400px; /* Hidden by default */
-      width: 350px;
-      height: 100%;
+      top: 0; right: -400px;
+      width: 350px; height: 100%;
       background: #1e293b;
       border-left: 1px solid #334155;
       padding: 30px;
@@ -119,56 +123,33 @@
       box-shadow: -5px 0 25px rgba(0,0,0,0.5);
       overflow-y: auto;
     }
-
     #panel.active { right: 0; }
-
     #panel h2 { margin-bottom: 10px; font-size: 24px; }
-    #panel .badge { 
-      display: inline-block; 
-      padding: 4px 8px; 
-      border-radius: 4px; 
-      font-size: 12px; 
-      background: #334155; 
-      color: #94a3b8;
-      margin-bottom: 20px;
-    }
-    #panel p { 
-      line-height: 1.6; 
-      color: #cbd5e1; 
-      font-size: 15px; 
-      white-space: pre-line; /* Preserves line breaks from JSON */
-    }
+    #panel .badge { display: inline-block; padding: 4px 8px; border-radius: 4px; font-size: 12px; background: #334155; color: #94a3b8; margin-bottom: 20px; }
+    #panel p { line-height: 1.6; color: #cbd5e1; font-size: 15px; white-space: pre-line; }
     
-    .close-btn {
-      position: absolute;
-      top: 20px;
-      right: 20px;
-      background: none;
-      font-size: 24px;
-      color: #64748b;
-    }
-    .close-btn:hover { background: none; color: white; }
+    .close-btn { position: absolute; top: 20px; right: 20px; background: none; font-size: 24px; color: #64748b; border: none; cursor: pointer; }
+    .close-btn:hover { color: white; background: none; }
 
-    /* Loading State */
-    #loading {
-      position: fixed;
-      top: 50%; left: 50%;
-      transform: translate(-50%, -50%);
-      font-size: 24px;
-      color: #64748b;
-    }
+    /* Loading */
+    #loading { position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 24px; color: #64748b; text-align: center; }
   </style>
 </head>
 <body>
 
   <div id="toolbar">
-    <h1>🗺️ AutoMap</h1>
+    <h1 id="map-title">Loading...</h1>
     <span style="font-size:12px; color:#64748b">|</span>
     <button onclick="resetView()">Reset View</button>
     <button class="danger" onclick="clearProgress()">Reset Progress</button>
   </div>
 
-  <div id="loading">Loading types.json...</div>
+  <div id="stats-panel">
+    <div class="stats-value" id="progress-text">0 / 0</div>
+    <div class="stats-label" id="progress-percent">0% Completed</div>
+  </div>
+
+  <div id="loading">Loading...</div>
 
   <div id="canvas-container">
     <svg id="svg"></svg>
@@ -178,7 +159,7 @@
     <button class="close-btn" onclick="closePanel()">×</button>
     <h2 id="p-title">Title</h2>
     <span id="p-id" class="badge">ID</span>
-    <p id="p-content">Content goes here...</p>
+    <p id="p-content">Content...</p>
     <br>
     <button id="p-toggle" style="width:100%; padding:12px; margin-top:20px;">Mark as Completed</button>
   </div>
@@ -189,41 +170,49 @@
     // --- CONFIGURATION ---
     const NODE_WIDTH = 180;
     const NODE_HEIGHT = 60;
-    const LEVEL_GAP = 120;  // Vertical gap
-    const SIBLING_GAP = 200; // Horizontal gap
+    const LEVEL_GAP = 120;
+    const SIBLING_GAP = 200;
 
-    // State
+    // --- STATE ---
     let nodesData = [];
     let linksData = [];
+    // Progress stored as: { "math.json": { "node1": true }, "coding.json": { ... } }
     let progress = JSON.parse(localStorage.getItem('roadmap-progress') || '{}');
+    let currentMapId = "default";
     let svg, g, zoom;
 
     // --- 1. LOAD DATA ---
     async function loadData() {
+      // Get 'map' param from URL, default to 'math.json'
+      const urlParams = new URLSearchParams(window.location.search);
+      const mapFile = urlParams.get('map') || 'math.json';
+
       try {
-        const response = await fetch('./types.json');
-        if (!response.ok) throw new Error("Could not load types.json");
+        // Fetch from 'roadmaps' folder
+        const response = await fetch(`./roadmaps/${mapFile}`);
+        if (!response.ok) throw new Error(`Could not load roadmaps/${mapFile}`);
+        
         const json = await response.json();
         
+        // Set Map ID for saving progress (use ID from JSON or filename)
+        currentMapId = json.id || mapFile;
+        document.getElementById('map-title').textContent = json.title || "Roadmap";
+
         processGraph(json.nodes);
         initGraph();
+        updateStats(); // Calc stats after load
         document.getElementById('loading').style.display = 'none';
       } catch (err) {
-        document.getElementById('loading').textContent = "Error: " + err.message + ". (Open via Live Server!)";
+        document.getElementById('loading').innerHTML = `Error loading <b>${mapFile}</b>.<br><br>1. Check if file is in <b>/roadmaps</b> folder.<br>2. Check console for details.<br>3. Open via Live Server.`;
+        console.error(err);
       }
     }
 
-    // --- 2. AUTO-LAYOUT ALGORITHM (Simple Layered Layout) ---
-    // Converts the user's "prerequisites" into X/Y coordinates automatically
+    // --- 2. LAYOUT LOGIC ---
     function processGraph(rawNodes) {
       const nodeMap = new Map();
-      
-      // Step A: Initialize nodes
-      rawNodes.forEach(n => {
-        nodeMap.set(n.id, { ...n, level: 0, children: [], parents: [] });
-      });
+      rawNodes.forEach(n => nodeMap.set(n.id, { ...n, level: 0, children: [], parents: [] }));
 
-      // Step B: Build Links & Relationships
       linksData = [];
       rawNodes.forEach(n => {
         if (n.prerequisites) {
@@ -237,8 +226,7 @@
         }
       });
 
-      // Step C: Calculate Levels (Longest Path) for Y coordinate
-      // Simple topological calc: Level = Max(Parent Levels) + 1
+      // Calculate Y Levels
       let changed = true;
       while(changed) {
         changed = false;
@@ -253,163 +241,150 @@
         });
       }
 
-      // Step D: Calculate X coordinate (Grouping by level)
+      // Calculate X Positions
       const levels = {};
       nodeMap.forEach(node => {
         if (!levels[node.level]) levels[node.level] = [];
         levels[node.level].push(node);
       });
 
-      // Assign coordinates
       nodesData = Array.from(nodeMap.values()).map(node => {
         const nodesInLevel = levels[node.level];
         const indexInLevel = nodesInLevel.indexOf(node);
-        
-        // Center alignment logic
         const levelWidth = nodesInLevel.length * SIBLING_GAP;
         const xOffset = indexInLevel * SIBLING_GAP - (levelWidth / 2) + (SIBLING_GAP / 2);
 
         return {
           ...node,
-          x: xOffset,           // Calculated X
-          y: node.level * LEVEL_GAP // Calculated Y
+          x: xOffset,
+          y: node.level * LEVEL_GAP
         };
       });
     }
 
-    // --- 3. D3 RENDERING ---
+    // --- 3. RENDERING ---
     function initGraph() {
       const container = document.getElementById('canvas-container');
-      const width = container.clientWidth;
-      const height = container.clientHeight;
+      svg = d3.select("#svg").attr("width", "100%").attr("height", "100%");
 
-      svg = d3.select("#svg")
-        .attr("width", "100%")
-        .attr("height", "100%");
-
-      // Arrow Marker
+      // Marker
       svg.append("defs").append("marker")
-        .attr("id", "arrow")
-        .attr("viewBox", "0 -5 10 10")
-        .attr("refX", NODE_WIDTH / 2 + 10) // Marker sits at edge of box
-        .attr("refY", 0)
-        .attr("markerWidth", 6)
-        .attr("markerHeight", 6)
+        .attr("id", "arrow").attr("viewBox", "0 -5 10 10")
+        .attr("refX", NODE_WIDTH / 2 + 10).attr("refY", 0)
+        .attr("markerWidth", 6).attr("markerHeight", 6)
         .attr("orient", "auto")
-        .append("path")
-        .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", "#475569");
+        .append("path").attr("d", "M0,-5L10,0L0,5").attr("fill", "#475569");
 
-      // Group for Zooming
       g = svg.append("g");
 
-      // Zoom Behavior
-      zoom = d3.zoom()
-        .scaleExtent([0.1, 2])
-        .on("zoom", (e) => g.attr("transform", e.transform));
-      
+      zoom = d3.zoom().scaleExtent([0.1, 2]).on("zoom", (e) => g.attr("transform", e.transform));
       svg.call(zoom);
-
-      // Center the view initially (Shift graph to middle of screen)
-      const initialTransform = d3.zoomIdentity.translate(width/2, 50).scale(0.8);
+      
+      const initialTransform = d3.zoomIdentity.translate(container.clientWidth/2, 50).scale(0.8);
       svg.call(zoom.transform, initialTransform);
 
       render();
     }
 
     function render() {
-      // 1. Draw Links (Curved cubic bezier for elegance)
-      g.selectAll(".link")
-        .data(linksData)
-        .join("path")
-        .attr("class", "link")
-        .attr("marker-end", "url(#arrow)")
+      // Links
+      g.selectAll(".link").data(linksData).join("path")
+        .attr("class", "link").attr("marker-end", "url(#arrow)")
         .attr("d", d => {
           const src = nodesData.find(n => n.id === d.source);
           const trg = nodesData.find(n => n.id === d.target);
-          
-          // Bezier Curve Logic: Vertical flow
-          return `M${src.x},${src.y + NODE_HEIGHT/2} 
-                  C${src.x},${src.y + NODE_HEIGHT/2 + 50} 
-                   ${trg.x},${trg.y - NODE_HEIGHT/2 - 50} 
-                   ${trg.x},${trg.y - NODE_HEIGHT/2}`;
+          return `M${src.x},${src.y + NODE_HEIGHT/2} C${src.x},${src.y + NODE_HEIGHT/2 + 50} ${trg.x},${trg.y - NODE_HEIGHT/2 - 50} ${trg.x},${trg.y - NODE_HEIGHT/2}`;
         });
 
-      // 2. Draw Nodes
-      const nodes = g.selectAll(".node")
-        .data(nodesData)
-        .join("g")
-        .attr("class", d => `node ${progress[d.id] ? 'completed' : ''}`)
+      // Nodes
+      const nodes = g.selectAll(".node").data(nodesData).join("g")
+        .attr("class", d => `node ${isCompleted(d.id) ? 'completed' : ''}`)
         .attr("transform", d => `translate(${d.x - NODE_WIDTH/2}, ${d.y - NODE_HEIGHT/2})`)
         .on("click", (e, d) => openPanel(d));
 
-      // Node Box
-      nodes.append("rect")
-        .attr("width", NODE_WIDTH)
-        .attr("height", NODE_HEIGHT);
-
-      // Node Label (with truncation if too long)
-      nodes.append("text")
-        .attr("x", NODE_WIDTH / 2)
-        .attr("y", NODE_HEIGHT / 2)
+      nodes.append("rect").attr("width", NODE_WIDTH).attr("height", NODE_HEIGHT);
+      nodes.append("text").attr("x", NODE_WIDTH/2).attr("y", NODE_HEIGHT/2)
         .text(d => d.title.length > 20 ? d.title.substring(0,18) + '...' : d.title);
     }
 
-    // --- 4. INTERACTIVITY ---
-    function openPanel(node) {
-      const panel = document.getElementById('panel');
-      const btn = document.getElementById('p-toggle');
+    // --- 4. LOGIC & STATS ---
+    function isCompleted(nodeId) {
+      return progress[currentMapId] && progress[currentMapId][nodeId];
+    }
+
+    function toggleNode(nodeId) {
+      // Init storage object if missing
+      if (!progress[currentMapId]) progress[currentMapId] = {};
+
+      if (progress[currentMapId][nodeId]) {
+        delete progress[currentMapId][nodeId];
+      } else {
+        progress[currentMapId][nodeId] = true;
+      }
+
+      localStorage.setItem('roadmap-progress', JSON.stringify(progress));
+
+      // Update Visuals
+      g.selectAll(".node").filter(d => d.id === nodeId)
+        .classed("completed", isCompleted(nodeId));
       
+      updatePanelButton(nodeId);
+      updateStats();
+    }
+
+    function updateStats() {
+      const total = nodesData.length;
+      if (total === 0) return;
+      
+      const completed = nodesData.filter(n => isCompleted(n.id)).length;
+      const percent = Math.round((completed / total) * 100);
+
+      document.getElementById('progress-text').textContent = `${completed} / ${total}`;
+      document.getElementById('progress-percent').textContent = `${percent}% Completed`;
+    }
+
+    // --- 5. UI HELPERS ---
+    function openPanel(node) {
       document.getElementById('p-title').textContent = node.title;
       document.getElementById('p-id').textContent = node.id;
-      document.getElementById('p-content').textContent = node.content; // Render Markdown here if needed
+      document.getElementById('p-content').textContent = node.content;
       
+      const btn = document.getElementById('p-toggle');
+      // Remove old event listeners by cloning
+      const newBtn = btn.cloneNode(true);
+      btn.parentNode.replaceChild(newBtn, btn);
+      
+      newBtn.onclick = () => toggleNode(node.id);
       updatePanelButton(node.id);
       
-      // Button Logic
-      btn.onclick = () => {
-        progress[node.id] = !progress[node.id];
-        localStorage.setItem('roadmap-progress', JSON.stringify(progress));
-        updatePanelButton(node.id);
-        
-        // Re-render class on SVG node
-        g.selectAll(".node")
-          .filter(d => d.id === node.id)
-          .classed("completed", progress[node.id]);
-      };
-
-      panel.classList.add('active');
+      document.getElementById('panel').classList.add('active');
     }
 
     function updatePanelButton(id) {
       const btn = document.getElementById('p-toggle');
-      const isDone = progress[id];
-      btn.textContent = isDone ? "Mark as Incomplete" : "Mark as Completed";
-      btn.style.background = isDone ? "#334155" : "#10b981";
-      btn.style.color = isDone ? "#cbd5e1" : "#fff";
-      btn.style.border = "none";
+      const done = isCompleted(id);
+      btn.textContent = done ? "Mark as Incomplete" : "Mark as Completed";
+      btn.style.background = done ? "#334155" : "#10b981";
+      btn.style.color = done ? "#cbd5e1" : "#fff";
     }
 
-    function closePanel() {
-      document.getElementById('panel').classList.remove('active');
-    }
-
+    function closePanel() { document.getElementById('panel').classList.remove('active'); }
+    
     function resetView() {
       const container = document.getElementById('canvas-container');
-      const initialTransform = d3.zoomIdentity.translate(container.clientWidth/2, 50).scale(0.8);
-      svg.transition().duration(750).call(zoom.transform, initialTransform);
+      svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity.translate(container.clientWidth/2, 50).scale(0.8));
     }
 
     function clearProgress() {
-      if(confirm("Are you sure? This deletes your save.")) {
-        localStorage.removeItem('roadmap-progress');
+      if(confirm("Are you sure? This deletes progress for the CURRENT roadmap.")) {
+        if(progress[currentMapId]) delete progress[currentMapId];
+        localStorage.setItem('roadmap-progress', JSON.stringify(progress));
         location.reload();
       }
     }
 
-    // Start
+    // START
     loadData();
-
   </script>
 </body>
 </html>
