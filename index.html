@@ -2,75 +2,170 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>Roadmap Platform</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>RoadMaps - Interactive Learning Paths Platform</title>
   <link rel="stylesheet" href="style.css">
+  <meta name="description" content="Create, share, and explore interactive learning roadmaps with beautiful visualizations">
+  <meta name="theme-color" content="#667eea">
 </head>
 <body>
-  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">☀️</button>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀️</button>
 
   <div class="hero">
-    <h1>Knowledge Roadmaps</h1>
-    <p>Interactive skill trees for self-taught developers.</p>
-    
-    <div style="margin-top: 30px;">
-      <button onclick="document.getElementById('file-input').click()" 
-              style="padding: 12px 24px; font-size: 16px; background: #3b82f6; color: white; border: none;">
-        📂 Open Local JSON
-      </button>
-      <input type="file" id="file-input" accept=".json" style="display: none;" onchange="loadUserFile(this)">
-      <div style="margin-top: 10px;">
-        <a href="editor.html" style="color: var(--text-muted); font-size: 14px;">Or create a new roadmap →</a>
+    <div class="hero-content">
+      <h1>Transform Learning Into an Adventure</h1>
+      <p class="subtitle">
+        Create stunning, interactive roadmaps that turn complex subjects into beautiful skill trees. 
+        Track progress, visualize dependencies, and master any topic.
+      </p>
+      
+      <div class="cta-buttons">
+        <button onclick="document.getElementById('file-input').click()" class="btn btn-primary">
+          📂 Open Roadmap
+        </button>
+        <input type="file" id="file-input" accept=".json" style="display: none;" onchange="loadUserFile(this)">
+        <a href="editor.html">
+          <button class="btn btn-glass">
+            ✨ Create New
+          </button>
+        </a>
+      </div>
+      
+      <div class="feature-tags">
+        <span class="tag">🎨 Drag & Drop Editor</span>
+        <span class="tag">📊 Progress Tracking</span>
+        <span class="tag">🌓 Dark/Light Mode</span>
+        <span class="tag">🔒 Privacy First</span>
       </div>
     </div>
   </div>
 
-  <div class="grid" id="grid">Loading directory...</div>
+  <section style="max-width: 1400px; margin: 0 auto; padding: 0 24px 64px;">
+    <div style="text-align: center; margin-bottom: 48px;">
+      <h2 style="font-size: 2.5rem; font-weight: 800; background: var(--gradient-primary); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; margin-bottom: 16px;">
+        Explore Roadmaps
+      </h2>
+      <p style="color: var(--text-secondary); font-size: 1.125rem; max-width: 600px; margin: 0 auto;">
+        Discover curated learning paths or create your own journey
+      </p>
+    </div>
+    
+    <div class="grid" id="grid">
+      <div style="text-align: center; grid-column: 1 / -1; padding: 60px; color: var(--text-muted);">
+        <div class="loading" style="margin: 0 auto 24px;"></div>
+        <p style="font-size: 15px;">Loading roadmaps...</p>
+      </div>
+    </div>
+  </section>
 
   <script>
     // Theme Logic
     function toggleTheme() {
       document.body.classList.toggle('light-theme');
-      localStorage.setItem('theme', document.body.classList.contains('light-theme') ? 'light' : 'dark');
-      document.getElementById('theme-btn').textContent = document.body.classList.contains('light-theme') ? '🌙' : '☀️';
+      const isLight = document.body.classList.contains('light-theme');
+      localStorage.setItem('theme', isLight ? 'light' : 'dark');
+      document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
     }
-    if(localStorage.getItem('theme') === 'light') toggleTheme();
+    
+    // Apply saved theme
+    if(localStorage.getItem('theme') === 'light') {
+      toggleTheme();
+    }
 
+    // Load directory
     fetch('directory.json')
       .then(res => res.json())
       .then(data => {
         const grid = document.getElementById('grid');
-        grid.innerHTML = data.map(map => {
+        
+        if (data.length === 0) {
+          grid.innerHTML = `
+            <div style="text-align: center; grid-column: 1 / -1; padding: 80px 40px;">
+              <div style="font-size: 72px; margin-bottom: 24px; opacity: 0.5;">📚</div>
+              <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--text-primary);">
+                No Roadmaps Yet
+              </h2>
+              <p style="color: var(--text-secondary); margin-bottom: 32px; font-size: 1.125rem;">
+                Create your first roadmap using our powerful editor!
+              </p>
+              <a href="editor.html">
+                <button class="btn btn-primary">
+                  ✨ Create Roadmap
+                </button>
+              </a>
+            </div>
+          `;
+          return;
+        }
 
+        grid.innerHTML = data.map((map, index) => {
           const pData = JSON.parse(localStorage.getItem('roadmap-progress') || '{}');
           const mapP = pData[map.id || map.file] || {};
           const completed = Object.keys(mapP).length;
           
+          // Gradient variations
+          const gradients = [
+            'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
+            'linear-gradient(135deg, #11998e 0%, #38ef7d 100%)',
+            'linear-gradient(135deg, #f093fb 0%, #f5576c 100%)',
+            'linear-gradient(135deg, #4facfe 0%, #00f2fe 100%)'
+          ];
+          const gradient = gradients[index % gradients.length];
+          
           return `
-          <a href="viewer.html?map=${map.file}" class="card">
-            <div style="font-size: 40px; margin-bottom: 10px;">${map.icon}</div>
-            <h3 style="margin-bottom:10px">${map.title}</h3>
-            <p style="color: var(--text-muted); margin-bottom: 20px; flex-grow: 1; line-height: 1.5;">${map.description}</p>
-            <div style="display:flex; justify-content:space-between; align-items:center; border-top:1px solid var(--line-color); padding-top:15px;">
-              <span class="badge">${map.difficulty}</span>
-              <span style="font-size:13px; color: ${completed > 0 ? '#10b981' : 'var(--text-muted)'}">
-                ${completed > 0 ? '✅ Started' : 'Start →'}
+          <a href="viewer.html?map=${map.file}" class="card" style="animation-delay: ${index * 0.1}s;">
+            <div class="card-icon">${map.icon || '📚'}</div>
+            <h3>${map.title}</h3>
+            <p>${map.description || 'Explore this learning path'}</p>
+            <div class="card-footer">
+              <span class="badge" style="background: ${gradient};">
+                ${map.difficulty || 'Intermediate'}
+              </span>
+              <span class="status ${completed > 0 ? 'started' : ''}">
+                ${completed > 0 ? 'In Progress' : 'Start →'}
               </span>
             </div>
           </a>
-        `}).join('');
+        `;
+        }).join('');
       })
-      .catch(err => document.getElementById('grid').innerHTML = "Error loading directory.json");
+      .catch(err => {
+        document.getElementById('grid').innerHTML = `
+          <div style="text-align: center; grid-column: 1 / -1; padding: 80px 40px;">
+            <div style="font-size: 72px; margin-bottom: 24px;">⚠️</div>
+            <h2 style="font-size: 2rem; font-weight: 700; margin-bottom: 16px; color: var(--accent-danger);">
+              Failed to Load
+            </h2>
+            <p style="color: var(--text-secondary); margin-bottom: 16px;">
+              Could not load directory.json
+            </p>
+            <p style="font-size: 13px; color: var(--text-muted); font-family: monospace;">
+              ${err.message}
+            </p>
+          </div>
+        `;
+        console.error(err);
+      });
 
     function loadUserFile(input) {
       const file = input.files[0];
       if (!file) return;
+      
       const reader = new FileReader();
       reader.onload = function(e) {
         try {
           const json = JSON.parse(e.target.result);
+          
+          if (!json.nodes || !Array.isArray(json.nodes)) {
+            throw new Error('Invalid format: expected "nodes" array');
+          }
+          
           localStorage.setItem('temp_roadmap', JSON.stringify(json));
           window.location.href = 'viewer.html?local=true';
-        } catch (err) { alert("Invalid JSON!"); }
+        } catch (err) {
+          alert(`Error: ${err.message}`);
+          console.error(err);
+        }
       };
       reader.readAsText(file);
     }

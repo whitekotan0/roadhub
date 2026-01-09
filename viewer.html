@@ -2,33 +2,47 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Roadmap Viewer</title>
   <link rel="stylesheet" href="style.css">
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
 </head>
 <body>
-  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn">☀️</button>
+  <button class="theme-btn" onclick="toggleTheme()" id="theme-btn" aria-label="Toggle theme">☀️</button>
 
-  <div id="toolbar">
-    <a href="index.html" style="font-weight: bold; text-decoration: none; color: var(--text-main);">← Exit</a>
-    <span style="color:var(--text-muted)">|</span>
-    <h3 id="map-title" style="margin:0">Loading...</h3>
-    <span style="color:var(--text-muted)">|</span>
-    <button onclick="resetView()">Center</button>
-    <button class="danger" onclick="clearProgress()">Reset Progress</button>
+  <div class="toolbar" id="toolbar">
+    <a href="index.html" style="display: flex; align-items: center; gap: 10px; font-weight: 600;">
+      <span>←</span>
+      <span>Home</span>
+    </a>
+    <span style="color: var(--text-muted); opacity: 0.5;">|</span>
+    <h3 id="map-title">Loading...</h3>
+    <span style="color: var(--text-muted); opacity: 0.5;">|</span>
+    <button onclick="resetView()" class="btn-glass" style="padding: 10px 16px; border-radius: 8px;" title="Center view">
+      🎯 Center
+    </button>
+    <button onclick="clearProgress()" class="btn-glass" style="padding: 10px 16px; border-radius: 8px;" title="Reset progress">
+      🗑️ Reset
+    </button>
   </div>
 
-  <div id="stats-panel">
+  <div class="stats-panel" id="stats-panel">
     <div class="stats-value" id="progress-text">0 / 0</div>
-    <div style="font-size: 12px; color: var(--text-muted);">Completed</div>
+    <div class="stats-label">Completed</div>
+    <div style="margin-top: 12px; font-size: 16px; font-weight: 700; color: var(--text-secondary);" id="progress-percent">0%</div>
   </div>
 
-  <div id="canvas-container"><svg id="svg"></svg></div>
+  <div id="canvas-container">
+    <svg id="svg"></svg>
+  </div>
 
-  <div id="panel">
-    <button class="close-btn" onclick="closePanel()">×</button>
-    <h2 id="p-title"></h2>
-    <div id="p-content" style="margin: 20px 0; line-height: 1.6;"></div>
-    <button id="p-toggle" style="width:100%; padding: 12px; font-weight: bold; margin-top: auto;">Mark Completed</button>
+  <div class="panel" id="panel">
+    <button class="close-btn" onclick="closePanel()" aria-label="Close">×</button>
+    <h2 id="p-title">Loading...</h2>
+    <div class="panel-content" id="p-content"></div>
+    <button id="p-toggle" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 24px;">
+      Mark as Completed
+    </button>
   </div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
