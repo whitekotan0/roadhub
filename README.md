@@ -7,61 +7,76 @@
   </p>
 
   <p>
-    <a href="https://your-username.github.io/your-repo/">🚀 Live Demo</a> •
+    <a href="https://your-username.github.io/roadmap-hub/">🚀 Live Demo</a> •
     <a href="#-features">✨ Features</a> •
-    <a href="#-getting-started">🛠️ Getting Started</a> •
-    <a href="#-contributing">🤝 Contribute</a>
+    <a href="#-quick-start">⚡ Quick Start</a> •
+    <a href="#-creating-roadmaps">🎨 Create Your Own</a>
   </p>
-
-  ![License](https://img.shields.io/badge/license-MIT-blue.svg)
-  ![Tech](https://img.shields.io/badge/built%20with-D3.js-orange.svg)
-  ![Size](https://img.shields.io/github/repo-size/your-username/your-repo)
 
   <br>
 
-  <img src="screenshots/demo.png" alt="Roadmap Demo" width="100%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+  <img src="screenshots/demo.gif" alt="Roadmap Demo" width="100%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
 
 </div>
 
 ---
 
-## 💡 What is this?
+## 💡 What is Roadmap Hub?
 
-**Roadmap Hub** is a lightweight, open-source platform for creating, sharing, and tracking educational roadmaps. 
+**Roadmap Hub** is a free, open-source platform for creating, sharing, and tracking educational roadmaps. 
 
-Unlike traditional linear lists, this tool visualizes knowledge as a **Skill Tree** (similar to video games). It helps learners understand dependencies, track their progress, and see the "big picture" of any subject—from Mathematics to Knitting.
+Unlike standard lists or wikis, this tool visualizes knowledge as **Interactive Skill Trees**. It helps learners understand dependencies, track their progress, and see the "big picture" of any subject—from Mathematics to Knitting.
 
-It is **Serverless**. Everything runs in the browser. You own your data (JSON).
-
-## ✨ Features
-
-### 🎨 Visual Editor (No-Code)
-Create complex graphs without writing a single line of code.
-* **Drag & Drop:** Move nodes freely on an infinite canvas.
-* **Smart Linking:** Drag from node connectors to link dependencies with beautiful Bezier curves.
-* **Real-time Preview:** See your changes instantly.
-
-### 🧭 Interactive Viewer
-* **Progress Tracking:** Mark nodes as "Completed" and see your % rise. Data is saved locally.
-* **Zoom & Pan:** Navigate massive roadmaps with D3.js powered controls.
-* **Rich Content:** Nodes support Markdown links and descriptions.
-
-### 🌗 Theming Engine
-* **Dark Mode (Default):** "Wine & Deep Blue" palette for late-night study sessions.
-* **Light Mode:** "Pastel Beige & Blue" palette for clarity.
-* **Customizable:** Built with CSS Variables for easy re-skinning.
-
-### 📂 Open Architecture
-* **JSON Based:** All maps are simple JSON files. Easy to share, version control, or generate programmatically.
-* **Local Loading:** Open any roadmap file directly from your computer without uploading it anywhere.
+### Why Use This?
+* **📚 For Learners:** Visualize complex subjects as interconnected nodes.
+* **👨‍🏫 For Educators:** Create structured curricula with clear prerequisites.
+* **🎮 Gamification:** Track progress like leveling up in an RPG.
+* **🔒 Privacy First:** No accounts, no tracking. Your data stays in your browser.
+* **📂 Open Format:** Full control over your data (JSON).
 
 ---
 
-## 🛠️ Getting Started
+## ✨ Features
 
-You don't need to install Node.js, npm, or Docker. It's just static HTML/JS!
+### 🎨 Visual Drag-and-Drop Editor
+Create complex learning paths without writing a single line of code.
+* **Infinite Canvas:** Drag nodes freely in any direction.
+* **Smart Linking:** Drag from node connectors ("ports") to create smooth Bezier curves.
+* **Real-time Preview:** See your changes instantly as you type.
 
-### 1. Clone the repository
+### 🧭 Interactive Viewer
+* **Progress Tracking:** Mark nodes as "Completed" and watch your percentage rise.
+* **Auto-Save:** Your progress is saved automatically to `localStorage`.
+* **Rich Content:** Nodes support Markdown (links, videos, formatted text).
+
+### 🌗 Beautiful Theming
+* **Dark Mode (Default):** Deep blue & wine palette, perfect for night coding.
+* **Light Mode:** Clean pastel design for clarity.
+* **Categories:** Color-coded groups (e.g., Core, GameDev, ML, Crypto).
+
+### 📂 Open Architecture
+* **JSON Based:** All maps are simple `.json` files. Easy to version control.
+* **Offline First:** Runs entirely in the browser. No backend required.
+* **Local Loading:** Open any roadmap file directly from your computer without uploading it.
+
+---
+
+## ⚡ Quick Start
+
+### Option 1: Live Demo
+Visit the GitHub Pages site (no installation needed):
+**[Launch Roadmap Hub](https://your-username.github.io/roadmap-hub/)**
+
+### Option 2: Run Locally
+Since the project fetches JSON files, you need a simple local server.
+
 ```bash
+# 1. Clone the repository
 git clone [https://github.com/your-username/roadmap-hub.git](https://github.com/your-username/roadmap-hub.git)
 cd roadmap-hub
+
+# 2. Run a local server (Python example)
+python -m http.server 8000
+
+# 3. Open in browser
+# http://localhost:8000
