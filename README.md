@@ -1,13 +1,13 @@
 <div align="center">
 
-  <h1>🗺️ Roadmap Hub</h1>
+  <h1>🗺️ RoadHub</h1>
   
   <p>
     <strong>Turn boring learning lists into interactive RPG-style skill trees.</strong>
   </p>
 
   <p>
-    <a href="https://your-username.github.io/roadmap-hub/">🚀 Live Demo</a> •
+    <a href="https://whitekotan0.github.io/roadhub/">🚀 Live Demo</a> •
     <a href="#-features">✨ Features</a> •
     <a href="#-quick-start">⚡ Quick Start</a> •
     <a href="#-creating-roadmaps">🎨 Create Your Own</a>
@@ -15,15 +15,15 @@
 
   <br>
 
-  <img src="screenshots/demo.gif" alt="Roadmap Demo" width="100%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
+  <img src="screenshots/demo.gif" alt="RoadHub Demo" width="100%" style="border-radius: 10px; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
 
 </div>
 
 ---
 
-## 💡 What is Roadmap Hub?
+## 💡 What is RoadHub?
 
-**Roadmap Hub** is a free, open-source platform for creating, sharing, and tracking educational roadmaps. 
+**RoadHub** is a free, open-source platform for creating, sharing, and tracking educational roadmaps. 
 
 Unlike standard lists or wikis, this tool visualizes knowledge as **Interactive Skill Trees**. It helps learners understand dependencies, track their progress, and see the "big picture" of any subject—from Mathematics to Knitting.
 
@@ -64,16 +64,16 @@ Create complex learning paths without writing a single line of code.
 ## ⚡ Quick Start
 
 ### Option 1: Live Demo
-Visit the GitHub Pages site (no installation needed):
-**[Launch Roadmap Hub](https://your-username.github.io/roadmap-hub/)**
+Visit the official site (no installation needed):
+**[Launch RoadHub](https://whitekotan0.github.io/roadhub/)**
 
 ### Option 2: Run Locally
 Since the project fetches JSON files, you need a simple local server.
 
 ```bash
 # 1. Clone the repository
-git clone [https://github.com/your-username/roadmap-hub.git](https://github.com/your-username/roadmap-hub.git)
-cd roadmap-hub
+git clone [https://github.com/whitekotan0/roadhub.git](https://github.com/whitekotan0/roadhub.git)
+cd roadhub
 
 # 2. Run a local server (Python example)
 python -m http.server 8000
