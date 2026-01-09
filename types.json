@@ -1,0 +1,1044 @@
+{
+  "id": "math_roadmap_v1",
+  "title": "Roadmap: From Absolute Zero to Math Omniscience",
+  "nodes": [
+    {
+      "id": "Start",
+      "title": "🚀 START: THE ABSOLUTE ZERO",
+      "content": "# Start Here\n\nWelcome to the beginning of your mathematical journey. Prepare your mind.",
+      "prerequisites": [],
+      "order": 0
+    },
+    
+    
+    {
+      "id": "P1_1",
+      "title": "Natural Numbers (N)",
+      "content": "# Natural Numbers\n\nThe counting numbers: 1, 2, 3... The foundation of all mathematics.",
+      "prerequisites": ["Start"]
+    },
+    {
+      "id": "P1_2",
+      "title": "Addition & Subtraction",
+      "content": "# Basic Operations\n\nUnderstanding how to combine and remove quantities.",
+      "prerequisites": ["P1_1"]
+    },
+    {
+      "id": "P1_3",
+      "title": "Multiplication Tables",
+      "content": "# Multiplication\n\nRepeated addition and memorizing the times tables.",
+      "prerequisites": ["P1_2"]
+    },
+    {
+      "id": "P1_4",
+      "title": "Division & Remainders",
+      "content": "# Division\n\nSplitting quantities into equal parts and handling what's left over.",
+      "prerequisites": ["P1_3"]
+    },
+    {
+      "id": "P1_5",
+      "title": "Divisibility Rules",
+      "content": "# Divisibility\n\nShortcuts to know if a number can be divided evenly.",
+      "prerequisites": ["P1_4"]
+    },
+    {
+      "id": "P1_6",
+      "title": "Primes, GCD & LCM",
+      "content": "# Number Theory Basics\n\nPrime numbers are the atoms of math. Greatest Common Divisor and Least Common Multiple.",
+      "prerequisites": ["P1_5"]
+    },
+    {
+      "id": "P1_7",
+      "title": "Fractions (Basic Operations)",
+      "content": "# Fractions\n\nUnderstanding parts of a whole.",
+      "prerequisites": ["P1_6"]
+    },
+    {
+      "id": "P1_8",
+      "title": "Mixed Numbers",
+      "content": "# Mixed Numbers\n\nCombining integers and fractions.",
+      "prerequisites": ["P1_7"]
+    },
+    {
+      "id": "P1_9",
+      "title": "Decimals",
+      "content": "# Decimals\n\nAnother way to represent fractional parts based on powers of 10.",
+      "prerequisites": ["P1_8"]
+    },
+    {
+      "id": "P1_10",
+      "title": "Repeating Decimals",
+      "content": "# Repeating Decimals\n\nWhen division doesn't stop: 0.333...",
+      "prerequisites": ["P1_9"]
+    },
+    {
+      "id": "P1_11",
+      "title": "Ratios & Proportions",
+      "content": "# Ratios\n\nComparing quantities relative to each other.",
+      "prerequisites": ["P1_10"]
+    },
+    {
+      "id": "P1_12",
+      "title": "Percentages & Interest",
+      "content": "# Percentages\n\nRatios out of 100. Crucial for finance.",
+      "prerequisites": ["P1_11"]
+    },
+    {
+      "id": "P1_13",
+      "title": "Absolute Value |x|",
+      "content": "# Absolute Value\n\nThe distance of a number from zero.",
+      "prerequisites": ["P1_12"]
+    },
+    {
+      "id": "P1_14",
+      "title": "Integers (Z) & Negative Numbers",
+      "content": "# Integers\n\nExpanding our world to include numbers below zero.",
+      "prerequisites": ["P1_13"]
+    },
+    {
+      "id": "P1_15",
+      "title": "Rational Numbers (Q)",
+      "content": "# Rational Numbers\n\nAny number that can be expressed as a fraction p/q.",
+      "prerequisites": ["P1_14"]
+    },
+    {
+      "id": "P1_16",
+      "title": "Order of Operations (PEMDAS)",
+      "content": "# PEMDAS\n\nThe strict rules of which calculation comes first.",
+      "prerequisites": ["P1_15"]
+    },
+
+    
+    {
+      "id": "ALG1",
+      "title": "Variables & Expressions",
+      "content": "# Intro to Algebra\n\nReplacing numbers with letters to solve for unknowns.",
+      "prerequisites": ["P1_16"]
+    },
+    {
+      "id": "ALG2",
+      "title": "Exponents (Integer Powers)",
+      "content": "# Exponents\n\nRepeated multiplication shorthand.",
+      "prerequisites": ["ALG1"]
+    },
+    {
+      "id": "ALG3",
+      "title": "Polynomials & Monomials",
+      "content": "# Polynomials\n\nExpressions with many terms.",
+      "prerequisites": ["ALG2"]
+    },
+    {
+      "id": "ALG4",
+      "title": "Factoring & Expansion Formulas",
+      "content": "# Factoring\n\nBreaking expressions down into their components.",
+      "prerequisites": ["ALG3"]
+    },
+    {
+      "id": "ALG5",
+      "title": "Linear Equations (ax+b=0)",
+      "content": "# Linear Equations\n\nSolving for x when the highest power is 1.",
+      "prerequisites": ["ALG4"]
+    },
+    {
+      "id": "ALG6",
+      "title": "Linear Inequalities",
+      "content": "# Inequalities\n\nDealing with greater than and less than.",
+      "prerequisites": ["ALG5"]
+    },
+    {
+      "id": "ALG7",
+      "title": "Systems of Linear Equations",
+      "content": "# Systems\n\nSolving multiple equations at the same time.",
+      "prerequisites": ["ALG6"]
+    },
+    {
+      "id": "ALG8",
+      "title": "Roots & Radicals",
+      "content": "# Roots\n\nThe inverse of exponents.",
+      "prerequisites": ["ALG7"]
+    },
+    {
+      "id": "ALG9",
+      "title": "Quadratic Equations",
+      "content": "# Quadratics\n\nEquations involving x squared.",
+      "prerequisites": ["ALG8"]
+    },
+    {
+      "id": "ALG10",
+      "title": "The Discriminant",
+      "content": "# Discriminant\n\nDetermining the nature of roots.",
+      "prerequisites": ["ALG9"]
+    },
+    {
+      "id": "ALG11",
+      "title": "Vieta's Formulas",
+      "content": "# Vieta's Formulas\n\nRelating roots to coefficients.",
+      "prerequisites": ["ALG10"]
+    },
+    {
+      "id": "ALG12",
+      "title": "Rational Expressions",
+      "content": "# Rational Expressions\n\nFractions with polynomials.",
+      "prerequisites": ["ALG11"]
+    },
+    
+    {
+      "id": "GEO1",
+      "title": "Points, Lines, Planes",
+      "content": "# Geometry Basics\n\nThe building blocks of space.",
+      "prerequisites": ["ALG1"]
+    },
+    {
+      "id": "GEO2",
+      "title": "Angles (Supplementary/Vertical)",
+      "content": "# Angles\n\nMeasuring rotation and intersection.",
+      "prerequisites": ["GEO1"]
+    },
+    {
+      "id": "GEO3",
+      "title": "Parallel Lines & Transversals",
+      "content": "# Parallel Lines\n\nLines that never meet and the angles they create.",
+      "prerequisites": ["GEO2"]
+    },
+    {
+      "id": "GEO4",
+      "title": "Triangles: Congruence (SSS, SAS)",
+      "content": "# Congruence\n\nProving shapes are identical.",
+      "prerequisites": ["GEO3"]
+    },
+    {
+      "id": "GEO5",
+      "title": "Centroids, Orthocenters",
+      "content": "# Triangle Centers\n\nSpecial points within triangles.",
+      "prerequisites": ["GEO4"]
+    },
+    {
+      "id": "GEO6",
+      "title": "Triangle Inequality",
+      "content": "# Triangle Inequality\n\nRules for side lengths.",
+      "prerequisites": ["GEO5"]
+    },
+    {
+      "id": "GEO7",
+      "title": "Polygons (Interior Angles)",
+      "content": "# Polygons\n\nShapes with many sides.",
+      "prerequisites": ["GEO6"]
+    },
+    {
+      "id": "GEO8",
+      "title": "Right Triangles",
+      "content": "# Right Triangles\n\nTriangles with a 90-degree angle.",
+      "prerequisites": ["GEO7"]
+    },
+    {
+      "id": "GEO9",
+      "title": "Pythagorean Theorem",
+      "content": "# Pythagoras\n\na² + b² = c².",
+      "prerequisites": ["GEO8"]
+    },
+    {
+      "id": "GEO10",
+      "title": "Area & Perimeter",
+      "content": "# Measurement\n\nCalculating space inside and around shapes.",
+      "prerequisites": ["GEO9"]
+    },
+    {
+      "id": "GEO11",
+      "title": "Similarity & Scaling",
+      "content": "# Similarity\n\nShapes that are the same shape but different sizes.",
+      "prerequisites": ["GEO10"]
+    },
+    {
+      "id": "GEO12",
+      "title": "Basic Trig Ratios (SOH CAH TOA)",
+      "content": "# Intro to Trig\n\nSine, Cosine, and Tangent basics.",
+      "prerequisites": ["GEO11"]
+    },
+    {
+      "id": "GEO13",
+      "title": "Law of Sines & Cosines",
+      "content": "# Advanced Triangles\n\nSolving non-right triangles.",
+      "prerequisites": ["GEO12"]
+    },
+    {
+      "id": "GEO14",
+      "title": "Circles (Chords, Tangents)",
+      "content": "# Circles\n\nProperties of perfectly round shapes.",
+      "prerequisites": ["GEO13"]
+    },
+    {
+      "id": "GEO15",
+      "title": "Inscribed Angles",
+      "content": "# Inscribed Angles\n\nAngles inside circles.",
+      "prerequisites": ["GEO14"]
+    },
+
+    
+    {
+      "id": "FNC1",
+      "title": "Function Concept f(x)",
+      "content": "# Functions\n\nThe machine that turns inputs into outputs.",
+      "prerequisites": ["ALG12"]
+    },
+    {
+      "id": "FNC2",
+      "title": "Domain & Range",
+      "content": "# Domain & Range\n\nWhat goes in and what comes out.",
+      "prerequisites": ["FNC1"]
+    },
+    {
+      "id": "FNC3",
+      "title": "Graphing Functions",
+      "content": "# Graphing\n\nVisualizing functions.",
+      "prerequisites": ["FNC2"]
+    },
+    {
+      "id": "FNC4",
+      "title": "Transformations (Shift/Stretch)",
+      "content": "# Transformations\n\nMoving and reshaping graphs.",
+      "prerequisites": ["FNC3"]
+    },
+    {
+      "id": "FNC5",
+      "title": "Inverse Functions",
+      "content": "# Inverses\n\nUndoing a function.",
+      "prerequisites": ["FNC4"]
+    },
+    {
+      "id": "EXP1",
+      "title": "Rational Exponents",
+      "content": "# Rational Exponents\n\nFractional powers.",
+      "prerequisites": ["FNC5"]
+    },
+    {
+      "id": "EXP2",
+      "title": "Exponential Functions",
+      "content": "# Exponentials\n\nRapid growth and decay.",
+      "prerequisites": ["EXP1"]
+    },
+    {
+      "id": "LOG1",
+      "title": "Logarithms: Definition",
+      "content": "# Logarithms\n\nThe inverse of exponentials.",
+      "prerequisites": ["EXP2"]
+    },
+    {
+      "id": "LOG2",
+      "title": "Log Rules & Properties",
+      "content": "# Log Rules\n\nManipulating logarithms.",
+      "prerequisites": ["LOG1"]
+    },
+    {
+      "id": "LOG3",
+      "title": "Logarithmic Equations",
+      "content": "# Log Equations\n\nSolving for x inside a log.",
+      "prerequisites": ["LOG2"]
+    },
+    {
+      "id": "TRIG1",
+      "title": "The Unit Circle",
+      "content": "# Unit Circle\n\nThe bridge between algebra and trigonometry.",
+      "prerequisites": ["GEO12"]
+    },
+    {
+      "id": "TRIG2",
+      "title": "Radians vs Degrees",
+      "content": "# Radians\n\nThe mathematical way to measure angles.",
+      "prerequisites": ["TRIG1"]
+    },
+    {
+      "id": "TRIG3",
+      "title": "Trig Functions (y=sin x)",
+      "content": "# Trig Functions\n\nGraphing waves.",
+      "prerequisites": ["TRIG2"]
+    },
+    {
+      "id": "TRIG4",
+      "title": "Trig Identities (Pythagorean)",
+      "content": "# Identities\n\nFundamental truths of trig.",
+      "prerequisites": ["TRIG3"]
+    },
+    {
+      "id": "TRIG5",
+      "title": "Compound Angle Formulas",
+      "content": "# Compound Angles\n\nAdding and subtracting angles inside trig functions.",
+      "prerequisites": ["TRIG4"]
+    },
+    {
+      "id": "TRIG6",
+      "title": "Inverse Trig Functions",
+      "content": "# Inverse Trig\n\nFinding the angle from the ratio.",
+      "prerequisites": ["TRIG5"]
+    },
+    {
+      "id": "TRIG7",
+      "title": "Analytic Trigonometry",
+      "content": "# Analytic Trig\n\nSolving complex trig equations.",
+      "prerequisites": ["TRIG6"]
+    },
+    {
+      "id": "VEC1",
+      "title": "Vectors (2D)",
+      "content": "# Vectors\n\nMagnitude and direction.",
+      "prerequisites": ["GEO9"]
+    },
+    {
+      "id": "VEC2",
+      "title": "Dot Product",
+      "content": "# Dot Product\n\nMultiplying vectors.",
+      "prerequisites": ["VEC1"]
+    },
+    {
+      "id": "CPLX1",
+      "title": "Complex Numbers (a+bi)",
+      "content": "# Complex Numbers\n\nThe square root of negative one.",
+      "prerequisites": ["VEC2"]
+    },
+    {
+      "id": "CPLX2",
+      "title": "Polar Form (Euler's Formula)",
+      "content": "# Euler's Formula\n\ne^(ix) = cos(x) + i*sin(x).",
+      "prerequisites": ["CPLX1"]
+    },
+
+    
+    {
+      "id": "LIM1",
+      "title": "Limits of Sequences",
+      "content": "# Limits (Sequences)\n\nWhere is the list of numbers going?",
+      "prerequisites": ["FNC3"]
+    },
+    {
+      "id": "LIM2",
+      "title": "Limits of Functions",
+      "content": "# Limits (Functions)\n\nApproaching a value without reaching it.",
+      "prerequisites": ["LIM1"]
+    },
+    {
+      "id": "LIM3",
+      "title": "Epsilon-Delta Definition",
+      "content": "# Epsilon-Delta\n\nThe rigorous definition of a limit.",
+      "prerequisites": ["LIM2"]
+    },
+    {
+      "id": "LIM4",
+      "title": "Continuity",
+      "content": "# Continuity\n\nDrawing without lifting the pencil.",
+      "prerequisites": ["LIM3"]
+    },
+    {
+      "id": "DER1",
+      "title": "Definition of Derivative",
+      "content": "# Derivatives\n\nInstantaneous rate of change.",
+      "prerequisites": ["LIM4"]
+    },
+    {
+      "id": "DER2",
+      "title": "Power/Product/Quotient Rules",
+      "content": "# Derivative Rules\n\nShortcuts for differentiation.",
+      "prerequisites": ["DER1"]
+    },
+    {
+      "id": "DER3",
+      "title": "Chain Rule",
+      "content": "# Chain Rule\n\nDifferentiating composite functions.",
+      "prerequisites": ["DER2"]
+    },
+    {
+      "id": "DER4",
+      "title": "Implicit Differentiation",
+      "content": "# Implicit Diff\n\nWhen y is stuck inside the equation.",
+      "prerequisites": ["DER3"]
+    },
+    {
+      "id": "DER5",
+      "title": "Applications: Extrema & Optimization",
+      "content": "# Optimization\n\nFinding the max and min values.",
+      "prerequisites": ["DER4"]
+    },
+    {
+      "id": "DER6",
+      "title": "Concavity & Inflection Points",
+      "content": "# Concavity\n\nThe curvature of the graph.",
+      "prerequisites": ["DER5"]
+    },
+    {
+      "id": "DER7",
+      "title": "L'Hopital's Rule",
+      "content": "# L'Hopital\n\nSolving tricky limits using derivatives.",
+      "prerequisites": ["DER6"]
+    },
+    {
+      "id": "INT1",
+      "title": "Antiderivatives",
+      "content": "# Antiderivatives\n\nWorking backwards from the derivative.",
+      "prerequisites": ["DER7"]
+    },
+    {
+      "id": "INT2",
+      "title": "Indefinite Integrals",
+      "content": "# Indefinite Integrals\n\nThe family of functions.",
+      "prerequisites": ["INT1"]
+    },
+    {
+      "id": "INT3",
+      "title": "U-Substitution",
+      "content": "# U-Sub\n\nThe reverse chain rule.",
+      "prerequisites": ["INT2"]
+    },
+    {
+      "id": "INT4",
+      "title": "Integration by Parts",
+      "content": "# Integration by Parts\n\nThe reverse product rule.",
+      "prerequisites": ["INT3"]
+    },
+    {
+      "id": "INT5",
+      "title": "Partial Fractions",
+      "content": "# Partial Fractions\n\nSplitting up rational functions to integrate.",
+      "prerequisites": ["INT4"]
+    },
+    {
+      "id": "INT6",
+      "title": "Definite Integrals (Riemann Sums)",
+      "content": "# Definite Integrals\n\nAccumulation and area under the curve.",
+      "prerequisites": ["INT5"]
+    },
+    {
+      "id": "INT7",
+      "title": "Fundamental Theorem of Calculus",
+      "content": "# FTC\n\nConnecting derivatives and integrals.",
+      "prerequisites": ["INT6"]
+    },
+    {
+      "id": "INT8",
+      "title": "Area Between Curves / Volumes",
+      "content": "# Applications of Integrals\n\nCalculating volumes of revolution.",
+      "prerequisites": ["INT7"]
+    },
+    {
+      "id": "INT9",
+      "title": "Improper Integrals",
+      "content": "# Improper Integrals\n\nIntegrating to infinity.",
+      "prerequisites": ["INT8"]
+    },
+    {
+      "id": "SER1",
+      "title": "Infinite Series",
+      "content": "# Infinite Series\n\nAdding up infinite lists of numbers.",
+      "prerequisites": ["INT9"]
+    },
+    {
+      "id": "SER2",
+      "title": "Convergence Tests",
+      "content": "# Convergence\n\nDoes the sum exist?",
+      "prerequisites": ["SER1"]
+    },
+    {
+      "id": "SER3",
+      "title": "Power Series",
+      "content": "# Power Series\n\nFunctions represented as infinite polynomials.",
+      "prerequisites": ["SER2"]
+    },
+    {
+      "id": "SER4",
+      "title": "Taylor & Maclaurin Series",
+      "content": "# Taylor Series\n\nApproximating functions.",
+      "prerequisites": ["SER3"]
+    },
+    {
+      "id": "SER5",
+      "title": "Fourier Series",
+      "content": "# Fourier Series\n\nRepresenting functions as sums of sines and cosines.",
+      "prerequisites": ["SER4"]
+    },
+    {
+      "id": "MUL1",
+      "title": "Multivariable Functions",
+      "content": "# Multivariable Calc\n\nFunctions with input (x, y, z...).",
+      "prerequisites": ["INT8"]
+    },
+    {
+      "id": "MUL2",
+      "title": "Partial Derivatives",
+      "content": "# Partial Derivatives\n\nDifferentiation in one direction.",
+      "prerequisites": ["MUL1"]
+    },
+    {
+      "id": "MUL3",
+      "title": "The Gradient Vector",
+      "content": "# Gradient\n\nThe direction of steepest ascent.",
+      "prerequisites": ["MUL2"]
+    },
+    {
+      "id": "MUL4",
+      "title": "Lagrange Multipliers",
+      "content": "# Lagrange Multipliers\n\nOptimization with constraints.",
+      "prerequisites": ["MUL3"]
+    },
+    {
+      "id": "MUL5",
+      "title": "Double Integrals",
+      "content": "# Double Integrals\n\nVolume under a surface.",
+      "prerequisites": ["MUL4"]
+    },
+    {
+      "id": "MUL6",
+      "title": "Triple Integrals",
+      "content": "# Triple Integrals\n\nIntegrating in 4D (hyperspace) or mass.",
+      "prerequisites": ["MUL5"]
+    },
+    {
+      "id": "MUL7",
+      "title": "Jacobians & Change of Variables",
+      "content": "# Jacobians\n\nChanging coordinate systems.",
+      "prerequisites": ["MUL6"]
+    },
+    {
+      "id": "MUL8",
+      "title": "Line Integrals",
+      "content": "# Line Integrals\n\nIntegrating along a path.",
+      "prerequisites": ["MUL7"]
+    },
+    {
+      "id": "MUL9",
+      "title": "Surface Integrals",
+      "content": "# Surface Integrals\n\nIntegrating over a surface.",
+      "prerequisites": ["MUL8"]
+    },
+    {
+      "id": "MUL10",
+      "title": "Vector Calculus Theorems (Green/Stokes)",
+      "content": "# Vector Theorems\n\nThe fundamental theorems of vector calc.",
+      "prerequisites": ["MUL9"]
+    },
+
+    
+    {
+      "id": "LA1",
+      "title": "Matrices & Operations",
+      "content": "# Matrices\n\nGrids of numbers.",
+      "prerequisites": ["VEC2", "ALG7"]
+    },
+    {
+      "id": "LA2",
+      "title": "Gaussian Elimination",
+      "content": "# Gaussian Elimination\n\nSolving systems systematically.",
+      "prerequisites": ["LA1"]
+    },
+    {
+      "id": "LA3",
+      "title": "Determinants",
+      "content": "# Determinants\n\nThe scaling factor of a matrix.",
+      "prerequisites": ["LA2"]
+    },
+    {
+      "id": "LA4",
+      "title": "Inverse Matrices",
+      "content": "# Inverses\n\nUndoing a matrix transformation.",
+      "prerequisites": ["LA3"]
+    },
+    {
+      "id": "LA5",
+      "title": "Vector Spaces & Subspaces",
+      "content": "# Vector Spaces\n\nAbstract algebraic structures.",
+      "prerequisites": ["LA4"]
+    },
+    {
+      "id": "LA6",
+      "title": "Linear Independence & Basis",
+      "content": "# Basis\n\nThe building blocks of a space.",
+      "prerequisites": ["LA5"]
+    },
+    {
+      "id": "LA7",
+      "title": "Linear Transformations",
+      "content": "# Transformations\n\nMapping vectors to vectors.",
+      "prerequisites": ["LA6"]
+    },
+    {
+      "id": "LA8",
+      "title": "Eigenvalues & Eigenvectors",
+      "content": "# Eigenvalues\n\nVectors that don't rotate.",
+      "prerequisites": ["LA7"]
+    },
+    {
+      "id": "LA9",
+      "title": "Diagonalization",
+      "content": "# Diagonalization\n\nSimplifying matrices.",
+      "prerequisites": ["LA8"]
+    },
+    {
+      "id": "LA10",
+      "title": "Inner Product Spaces",
+      "content": "# Inner Products\n\nGeneralizing the dot product.",
+      "prerequisites": ["LA9"]
+    },
+    {
+      "id": "DE1",
+      "title": "First Order ODEs",
+      "content": "# ODEs\n\nEquations with derivatives.",
+      "prerequisites": ["INT2"]
+    },
+    {
+      "id": "DE2",
+      "title": "Separable Equations",
+      "content": "# Separable Equations\n\nSplitting x and y.",
+      "prerequisites": ["DE1"]
+    },
+    {
+      "id": "DE3",
+      "title": "Integrating Factors",
+      "content": "# Integrating Factors\n\nA trick to solve linear ODEs.",
+      "prerequisites": ["DE2"]
+    },
+    {
+      "id": "DE4",
+      "title": "Second Order Linear ODEs",
+      "content": "# Second Order ODEs\n\nEquations with y''.",
+      "prerequisites": ["DE3"]
+    },
+    {
+      "id": "DE5",
+      "title": "Systems of ODEs",
+      "content": "# Systems of ODEs\n\nMultiple dependent equations.",
+      "prerequisites": ["LA8"]
+    },
+    {
+      "id": "DE6",
+      "title": "Laplace Transforms",
+      "content": "# Laplace Transforms\n\nTurning ODEs into algebra.",
+      "prerequisites": ["DE4"]
+    },
+    {
+      "id": "PDE1",
+      "title": "Intro to PDEs (Heat/Wave Eq)",
+      "content": "# PDEs\n\nPartial Differential Equations.",
+      "prerequisites": ["DE6"]
+    },
+
+    
+    {
+      "id": "SET1",
+      "title": "Set Theory Basics",
+      "content": "# Set Theory\n\nCollections of objects.",
+      "prerequisites": ["P1_15"]
+    },
+    {
+      "id": "LOGIC1",
+      "title": "Propositional Logic",
+      "content": "# Logic\n\nTrue and False.",
+      "prerequisites": ["SET1"]
+    },
+    {
+      "id": "LOGIC2",
+      "title": "Truth Tables",
+      "content": "# Truth Tables\n\nAnalyzing logic statements.",
+      "prerequisites": ["LOGIC1"]
+    },
+    {
+      "id": "LOGIC3",
+      "title": "Predicates & Quantifiers",
+      "content": "# Quantifiers\n\nFor all, There exists.",
+      "prerequisites": ["LOGIC2"]
+    },
+    {
+      "id": "PROOF1",
+      "title": "Proof Techniques",
+      "content": "# Proofs\n\nHow to prove math mathematically.",
+      "prerequisites": ["LOGIC3"]
+    },
+    {
+      "id": "INDUCT",
+      "title": "Mathematical Induction",
+      "content": "# Induction\n\nThe domino effect proof.",
+      "prerequisites": ["PROOF1"]
+    },
+    {
+      "id": "COMB1",
+      "title": "Permutations & Combinations",
+      "content": "# Combinatorics\n\nCounting without counting.",
+      "prerequisites": ["INDUCT"]
+    },
+    {
+      "id": "COMB2",
+      "title": "Pigeonhole Principle",
+      "content": "# Pigeonhole Principle\n\nSimple but powerful logic.",
+      "prerequisites": ["COMB1"]
+    },
+    {
+      "id": "COMB3",
+      "title": "Binomial Theorem",
+      "content": "# Binomial Theorem\n\nExpanding (a+b)^n.",
+      "prerequisites": ["COMB2"]
+    },
+    {
+      "id": "GRPH1",
+      "title": "Graph Theory Introduction",
+      "content": "# Graph Theory\n\nNodes and edges.",
+      "prerequisites": ["COMB3"]
+    },
+    {
+      "id": "GRPH2",
+      "title": "Trees, Paths, Cycles",
+      "content": "# Graph Structures\n\nNavigating graphs.",
+      "prerequisites": ["GRPH1"]
+    },
+    {
+      "id": "GRPH3",
+      "title": "Graph Algorithms (Dijkstra/BFS)",
+      "content": "# Algorithms\n\nFinding the shortest path.",
+      "prerequisites": ["GRPH2"]
+    },
+    {
+      "id": "PROB1",
+      "title": "Probability Spaces",
+      "content": "# Probability\n\nThe math of chance.",
+      "prerequisites": ["COMB1"]
+    },
+    {
+      "id": "PROB2",
+      "title": "Conditional Probability / Bayes",
+      "content": "# Bayes Theorem\n\nUpdating beliefs with new evidence.",
+      "prerequisites": ["PROB1"]
+    },
+    {
+      "id": "PROB3",
+      "title": "Random Variables (Discrete/Continuous)",
+      "content": "# Random Variables\n\nFunctions mapping outcomes to numbers.",
+      "prerequisites": ["PROB2"]
+    },
+    {
+      "id": "PROB4",
+      "title": "PDFs and CDFs",
+      "content": "# Distributions\n\nProbability Density Functions.",
+      "prerequisites": ["PROB3"]
+    },
+    {
+      "id": "PROB5",
+      "title": "Expected Value & Variance",
+      "content": "# Expectation\n\nThe average outcome.",
+      "prerequisites": ["PROB4"]
+    },
+    {
+      "id": "PROB6",
+      "title": "Law of Large Numbers",
+      "content": "# LLN\n\nWhy casinos always win.",
+      "prerequisites": ["PROB5"]
+    },
+    {
+      "id": "PROB7",
+      "title": "Central Limit Theorem",
+      "content": "# CLT\n\nEverything becomes a Bell Curve.",
+      "prerequisites": ["PROB6"]
+    },
+    {
+      "id": "STAT1",
+      "title": "Hypothesis Testing",
+      "content": "# Statistics\n\nTesting scientific claims.",
+      "prerequisites": ["PROB7"]
+    },
+    {
+      "id": "STAT2",
+      "title": "Regression Analysis",
+      "content": "# Regression\n\nFitting lines to data.",
+      "prerequisites": ["STAT1"]
+    },
+
+    
+    {
+      "id": "NUM1",
+      "title": "Number Theory: Modular Arithmetic",
+      "content": "# Number Theory\n\nClock arithmetic.",
+      "prerequisites": ["P1_6"]
+    },
+    {
+      "id": "ALG_ABS1",
+      "title": "Group Theory",
+      "content": "# Group Theory\n\nThe study of symmetry.",
+      "prerequisites": ["NUM1"]
+    },
+    {
+      "id": "ALG_ABS2",
+      "title": "Cyclic Groups & Subgroups",
+      "content": "# Subgroups\n\nGroups inside groups.",
+      "prerequisites": ["ALG_ABS1"]
+    },
+    {
+      "id": "ALG_ABS3",
+      "title": "Homomorphisms & Isomorphisms",
+      "content": "# Homomorphisms\n\nStructure-preserving maps.",
+      "prerequisites": ["ALG_ABS2"]
+    },
+    {
+      "id": "ALG_ABS4",
+      "title": "Rings & Ideals",
+      "content": "# Rings\n\nGroups with multiplication.",
+      "prerequisites": ["ALG_ABS3"]
+    },
+    {
+      "id": "ALG_ABS5",
+      "title": "Fields & Polynomial Rings",
+      "content": "# Fields\n\nWhere division is allowed.",
+      "prerequisites": ["ALG_ABS4"]
+    },
+    {
+      "id": "GAL",
+      "title": "Galois Theory",
+      "content": "# Galois Theory\n\nWhy there is no quintic formula.",
+      "prerequisites": ["ALG_ABS5"]
+    },
+    {
+      "id": "RA1",
+      "title": "Metric Spaces",
+      "content": "# Metric Spaces\n\nDefining distance abstractly.",
+      "prerequisites": ["SER2"]
+    },
+    {
+      "id": "RA2",
+      "title": "Open/Closed Sets",
+      "content": "# Topology Basics\n\nWhat does it mean to be 'near'?",
+      "prerequisites": ["RA1"]
+    },
+    {
+      "id": "RA3",
+      "title": "Compactness & Connectedness",
+      "content": "# Compactness\n\nThe generalization of finite sets.",
+      "prerequisites": ["RA2"]
+    },
+    {
+      "id": "RA4",
+      "title": "Measure Theory",
+      "content": "# Measure Theory\n\nAssigning size to sets.",
+      "prerequisites": ["RA3"]
+    },
+    {
+      "id": "RA5",
+      "title": "Lebesgue Integration",
+      "content": "# Lebesgue Integral\n\nA more powerful integral.",
+      "prerequisites": ["RA4"]
+    },
+    {
+      "id": "TOPO1",
+      "title": "General Topology",
+      "content": "# General Topology\n\nRubber sheet geometry.",
+      "prerequisites": ["RA3"]
+    },
+    {
+      "id": "TOPO2",
+      "title": "Homotopy & Fundamental Groups",
+      "content": "# Algebraic Topology\n\nLoops and holes.",
+      "prerequisites": ["TOPO1"]
+    },
+    {
+      "id": "CA1",
+      "title": "Holomorphic Functions",
+      "content": "# Complex Analysis\n\nCalculus with complex numbers.",
+      "prerequisites": ["CPLX2"]
+    },
+    {
+      "id": "CA2",
+      "title": "Cauchy-Riemann Equations",
+      "content": "# C-R Equations\n\nConditions for complex differentiability.",
+      "prerequisites": ["CA1"]
+    },
+    {
+      "id": "CA3",
+      "title": "Contour Integration & Residues",
+      "content": "# Residues\n\nIntegrating around singularities.",
+      "prerequisites": ["CA2"]
+    },
+    {
+      "id": "CA4",
+      "title": "Riemann Surfaces",
+      "content": "# Riemann Surfaces\n\nComplex manifolds.",
+      "prerequisites": ["CA3"]
+    },
+    {
+      "id": "FA1",
+      "title": "Normed Vector Spaces",
+      "content": "# Functional Analysis\n\nInfinite dimensional linear algebra.",
+      "prerequisites": ["LA10"]
+    },
+    {
+      "id": "FA2",
+      "title": "Banach Spaces",
+      "content": "# Banach Spaces\n\nComplete normed spaces.",
+      "prerequisites": ["FA1"]
+    },
+    {
+      "id": "FA3",
+      "title": "Hilbert Spaces",
+      "content": "# Hilbert Spaces\n\nSpaces with angles and lengths.",
+      "prerequisites": ["FA2"]
+    },
+    {
+      "id": "FA4",
+      "title": "Spectral Theory",
+      "content": "# Spectral Theory\n\nEigenvalues in infinite dimensions.",
+      "prerequisites": ["FA3"]
+    },
+
+    
+    {
+      "id": "ALG_TOPO",
+      "title": "Algebraic Topology (Homology)",
+      "content": "# Homology\n\nCounting holes in higher dimensions.",
+      "prerequisites": ["TOPO2"]
+    },
+    {
+      "id": "ALG_GEO",
+      "title": "Algebraic Geometry (Schemes)",
+      "content": "# Algebraic Geometry\n\nGeometry of polynomial equations.",
+      "prerequisites": ["ALG_ABS5"]
+    },
+    {
+      "id": "DIFF_GEO",
+      "title": "Differential Geometry (Manifolds)",
+      "content": "# Manifolds\n\nCurved spaces.",
+      "prerequisites": ["MUL10"]
+    },
+    {
+      "id": "RIEM_GEO",
+      "title": "Riemannian Geometry (Curvature)",
+      "content": "# Riemannian Geometry\n\nThe math of General Relativity.",
+      "prerequisites": ["DIFF_GEO"]
+    },
+    {
+      "id": "QUANTUM",
+      "title": "Mathematical Physics / QM",
+      "content": "# Math Physics\n\nThe rigorous math of the universe.",
+      "prerequisites": ["FA4"]
+    },
+    {
+      "id": "DYN_SYS",
+      "title": "Dynamical Systems & Chaos",
+      "content": "# Chaos Theory\n\nPredictable unpredictability.",
+      "prerequisites": ["DE5"]
+    },
+    {
+      "id": "CAT",
+      "title": "Category Theory (Functors)",
+      "content": "# Category Theory\n\nThe mathematics of mathematics.",
+      "prerequisites": ["ALG_ABS3"]
+    },
+    {
+      "id": "AN_NUM",
+      "title": "Analytic Number Theory (Zeta Function)",
+      "content": "# Analytic Number Theory\n\nUsing analysis to study integers.",
+      "prerequisites": ["NUM1"]
+    },
+    {
+      "id": "NONLIN_PDE",
+      "title": "Nonlinear PDEs",
+      "content": "# Nonlinear PDEs\n\nThe hardest equations to solve.",
+      "prerequisites": ["PDE1"]
+    },
+    {
+      "id": "OMNI",
+      "title": "🌌 OMNISCIENCE: Math Complete",
+      "content": "# OMNISCIENCE\n\nYou have reached the end. Or have you?",
+      "prerequisites": ["CAT", "ALG_TOPO", "RIEM_GEO", "AN_NUM"]
+    }
+  ]
+}

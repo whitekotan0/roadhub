@@ -3,464 +3,413 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>RoadMaths - Static Math Roadmap</title>
+  <title>RoadMaths - Dynamic JSON Roadmap</title>
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
+    :root {
+      --bg-color: #0f172a;
+      --node-bg: #1e293b;
+      --node-border: #334155;
+      --node-hover: #3b82f6;
+      --text-main: #f8fafc;
+      --text-muted: #94a3b8;
+      --line-color: #475569;
+      --completed-bg: #065f46;
+      --completed-border: #10b981;
     }
-    
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
     body {
-      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-      background: #0a0a0a;
-      color: #fff;
-      overflow: hidden;
-    }
-    
-    #container {
-      width: 100vw;
+      font-family: 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+      background: var(--bg-color);
+      color: var(--text-main);
+      overflow: hidden; /* Canvas pans instead of scroll */
       height: 100vh;
       display: flex;
       flex-direction: column;
     }
-    
+
+    /* --- Toolbar --- */
     #toolbar {
-      background: #1a1a1a;
-      padding: 12px 20px;
-      border-bottom: 1px solid #333;
+      position: absolute;
+      top: 20px;
+      left: 20px;
+      z-index: 100;
+      background: rgba(30, 41, 59, 0.8);
+      backdrop-filter: blur(8px);
+      padding: 10px 20px;
+      border-radius: 12px;
+      border: 1px solid var(--node-border);
       display: flex;
-      gap: 12px;
+      gap: 15px;
       align-items: center;
+      box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
     }
-    
-    #toolbar h1 {
-      font-size: 20px;
-      margin-right: auto;
-    }
-    
+
+    h1 { font-size: 18px; font-weight: 700; color: #60a5fa; }
+
     button {
-      background: #2a2a2a;
-      border: 1px solid #444;
-      color: #fff;
-      padding: 8px 16px;
+      background: #334155;
+      border: none;
+      color: white;
+      padding: 6px 12px;
       border-radius: 6px;
       cursor: pointer;
-      font-size: 14px;
-      transition: all 0.2s;
+      font-size: 13px;
+      transition: 0.2s;
     }
-    
-    button:hover {
-      background: #3a3a3a;
-      border-color: #666;
+    button:hover { background: #475569; }
+    button.danger:hover { background: #ef4444; }
+
+    /* --- SVG Canvas --- */
+    #canvas-container {
+      width: 100%;
+      height: 100%;
+      cursor: grab;
     }
-    
-    #canvas-wrapper {
-      flex: 1;
-      overflow: auto;
-      position: relative;
-    }
-    
-    svg {
-      background: #0a0a0a;
-      display: block;
-    }
-    
+    #canvas-container:active { cursor: grabbing; }
+
+    /* --- D3 Elements Styles --- */
     .node rect {
-      fill: #1e293b;
-      stroke: #334155;
-      stroke-width: 2;
-      rx: 8;
-      cursor: pointer;
-      transition: all 0.2s;
+      fill: var(--node-bg);
+      stroke: var(--node-border);
+      stroke-width: 2px;
+      rx: 6;
+      transition: all 0.3s ease;
     }
-    
+
     .node:hover rect {
-      fill: #2d3e56;
-      stroke: #4a5f7f;
+      stroke: var(--node-hover);
+      filter: drop-shadow(0 0 8px rgba(59, 130, 246, 0.5));
     }
-    
+
     .node.completed rect {
-      fill: #065f46;
-      stroke: #10b981;
+      fill: var(--completed-bg);
+      stroke: var(--completed-border);
     }
-    
+
     .node text {
-      fill: white;
+      fill: var(--text-main);
       font-size: 14px;
       font-weight: 500;
       pointer-events: none;
-      user-select: none;
-    }
-    
-    .link {
-      stroke: #475569;
-      stroke-width: 2;
-      fill: none;
-      marker-end: url(#arrow);
-    }
-    
-    .arrow {
-      fill: #475569;
-    }
-    
-    #info {
-      position: fixed;
-      top: 70px;
-      right: 20px;
-      background: #1a1a1a;
-      border: 1px solid #333;
-      border-radius: 8px;
-      padding: 16px;
-      max-width: 300px;
-      display: none;
-    }
-    
-    #info.active {
-      display: block;
-    }
-    
-    #info h3 {
-      margin-bottom: 8px;
-      font-size: 18px;
-    }
-    
-    #info p {
-      color: #999;
-      font-size: 14px;
-      line-height: 1.5;
-      margin-bottom: 12px;
-    }
-    
-    #info a {
-      color: #60a5fa;
-      text-decoration: none;
+      text-anchor: middle;
+      dominant-baseline: middle;
     }
 
-    .level-label {
-      fill: #666;
-      font-size: 12px;
-      font-weight: 600;
-      text-transform: uppercase;
+    .link {
+      fill: none;
+      stroke: var(--line-color);
+      stroke-width: 2px;
+      transition: stroke 0.3s;
+    }
+
+    /* --- Side Panel --- */
+    #panel {
+      position: fixed;
+      top: 0;
+      right: -400px; /* Hidden by default */
+      width: 350px;
+      height: 100%;
+      background: #1e293b;
+      border-left: 1px solid #334155;
+      padding: 30px;
+      transition: right 0.3s cubic-bezier(0.16, 1, 0.3, 1);
+      z-index: 200;
+      box-shadow: -5px 0 25px rgba(0,0,0,0.5);
+      overflow-y: auto;
+    }
+
+    #panel.active { right: 0; }
+
+    #panel h2 { margin-bottom: 10px; font-size: 24px; }
+    #panel .badge { 
+      display: inline-block; 
+      padding: 4px 8px; 
+      border-radius: 4px; 
+      font-size: 12px; 
+      background: #334155; 
+      color: #94a3b8;
+      margin-bottom: 20px;
+    }
+    #panel p { 
+      line-height: 1.6; 
+      color: #cbd5e1; 
+      font-size: 15px; 
+      white-space: pre-line; /* Preserves line breaks from JSON */
+    }
+    
+    .close-btn {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: none;
+      font-size: 24px;
+      color: #64748b;
+    }
+    .close-btn:hover { background: none; color: white; }
+
+    /* Loading State */
+    #loading {
+      position: fixed;
+      top: 50%; left: 50%;
+      transform: translate(-50%, -50%);
+      font-size: 24px;
+      color: #64748b;
     }
   </style>
 </head>
 <body>
-  <div id="container">
-    <div id="toolbar">
-      <h1>🗺️ RoadMaths</h1>
-      <button onclick="exportJSON()">Export JSON</button>
-      <button onclick="clearProgress()">Clear Progress</button>
-    </div>
-    <div id="canvas-wrapper">
-      <svg id="canvas"></svg>
-    </div>
+
+  <div id="toolbar">
+    <h1>🗺️ AutoMap</h1>
+    <span style="font-size:12px; color:#64748b">|</span>
+    <button onclick="resetView()">Reset View</button>
+    <button class="danger" onclick="clearProgress()">Reset Progress</button>
   </div>
-  
-  <div id="info">
-    <h3 id="info-title"></h3>
-    <p id="info-desc"></p>
-    <div id="info-links"></div>
-    <button onclick="closeInfo()">Close</button>
+
+  <div id="loading">Loading types.json...</div>
+
+  <div id="canvas-container">
+    <svg id="svg"></svg>
+  </div>
+
+  <div id="panel">
+    <button class="close-btn" onclick="closePanel()">×</button>
+    <h2 id="p-title">Title</h2>
+    <span id="p-id" class="badge">ID</span>
+    <p id="p-content">Content goes here...</p>
+    <br>
+    <button id="p-toggle" style="width:100%; padding:12px; margin-top:20px;">Mark as Completed</button>
   </div>
 
   <script src="https://d3js.org/d3.v7.min.js"></script>
+  
   <script>
-    // ===== STATIC JSON DATA =====
-    const roadmapData = {
-      "meta": {
-        "title": "roadmaths",
-        "version": "0.1",
-        "author": "whitekotan"
-      },
-      "nodes": [
-        // LEVEL 0: BASICS
-        {
-          "id": "arithmetic",
-          "label": "Arithmetic",
-          "level": 0,
-          "position": { "x": 100, "y": 100 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Basic operations: +, -, ×, ÷",
-            "links": ["https://khanacademy.org/math/arithmetic"]
-          }
-        },
-        {
-          "id": "fractions",
-          "label": "Fractions",
-          "level": 0,
-          "position": { "x": 100, "y": 200 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Understanding fractions and operations",
-            "links": ["https://khanacademy.org/math/fractions"]
-          }
-        },
-        {
-          "id": "decimals",
-          "label": "Decimals",
-          "level": 0,
-          "position": { "x": 100, "y": 300 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Decimal numbers and operations",
-            "links": []
-          }
-        },
+    // --- CONFIGURATION ---
+    const NODE_WIDTH = 180;
+    const NODE_HEIGHT = 60;
+    const LEVEL_GAP = 120;  // Vertical gap
+    const SIBLING_GAP = 200; // Horizontal gap
 
-        // LEVEL 1: HIGH SCHOOL
-        {
-          "id": "algebra-basics",
-          "label": "Basic Algebra",
-          "level": 1,
-          "position": { "x": 350, "y": 150 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Variables, expressions, linear equations",
-            "links": ["https://khanacademy.org/math/algebra"]
-          }
-        },
-        {
-          "id": "geometry",
-          "label": "Geometry",
-          "level": 1,
-          "position": { "x": 350, "y": 250 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Shapes, angles, area, perimeter",
-            "links": ["https://khanacademy.org/math/geometry"]
-          }
-        },
+    // State
+    let nodesData = [];
+    let linksData = [];
+    let progress = JSON.parse(localStorage.getItem('roadmap-progress') || '{}');
+    let svg, g, zoom;
 
-        // LEVEL 2: ADVANCED HIGH SCHOOL
-        {
-          "id": "functions",
-          "label": "Functions",
-          "level": 2,
-          "position": { "x": 600, "y": 100 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Function notation, domain, range",
-            "links": []
-          }
-        },
-        {
-          "id": "quadratic",
-          "label": "Quadratic Equations",
-          "level": 2,
-          "position": { "x": 600, "y": 200 },
-          "width": 180,
-          "height": 60,
-          "content": {
-            "description": "ax² + bx + c = 0, discriminant, Vieta",
-            "links": ["https://brilliant.org/quadratic"]
-          }
-        },
-        {
-          "id": "trigonometry",
-          "label": "Trigonometry",
-          "level": 2,
-          "position": { "x": 600, "y": 300 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Sin, cos, tan, trigonometric identities",
-            "links": []
-          }
-        },
-
-        // LEVEL 3: BACHELOR
-        {
-          "id": "calculus-1",
-          "label": "Calculus I",
-          "level": 3,
-          "position": { "x": 850, "y": 150 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Limits, derivatives, basic integration",
-            "links": ["https://ocw.mit.edu/calculus"]
-          }
-        },
-        {
-          "id": "linear-algebra",
-          "label": "Linear Algebra",
-          "level": 3,
-          "position": { "x": 850, "y": 250 },
-          "width": 160,
-          "height": 60,
-          "content": {
-            "description": "Matrices, vectors, linear transformations",
-            "links": []
-          }
-        }
-      ],
-      "edges": [
-        // Level 0 → 1
-        { "from": "arithmetic", "to": "algebra-basics" },
-        { "from": "fractions", "to": "algebra-basics" },
-        { "from": "arithmetic", "to": "geometry" },
-        { "from": "decimals", "to": "algebra-basics" },
-
-        // Level 1 → 2
-        { "from": "algebra-basics", "to": "functions" },
-        { "from": "algebra-basics", "to": "quadratic" },
-        { "from": "geometry", "to": "trigonometry" },
-
-        // Level 2 → 3
-        { "from": "functions", "to": "calculus-1" },
-        { "from": "quadratic", "to": "calculus-1" },
-        { "from": "trigonometry", "to": "calculus-1" },
-        { "from": "algebra-basics", "to": "linear-algebra" }
-      ]
-    };
-
-    // ===== LOAD PROGRESS FROM LOCALSTORAGE =====
-    const progress = JSON.parse(localStorage.getItem('roadmaths-progress') || '{}');
-
-    // ===== SETUP SVG =====
-    const svg = d3.select("#canvas");
-    const nodes = roadmapData.nodes;
-    const edges = roadmapData.edges;
-
-    // Calculate canvas size
-    const maxX = Math.max(...nodes.map(n => n.position.x + n.width)) + 100;
-    const maxY = Math.max(...nodes.map(n => n.position.y + n.height)) + 100;
-    svg.attr("width", maxX).attr("height", maxY);
-
-    // ===== ARROW MARKER =====
-    svg.append("defs")
-      .append("marker")
-      .attr("id", "arrow")
-      .attr("markerWidth", 10)
-      .attr("markerHeight", 10)
-      .attr("refX", 9)
-      .attr("refY", 3)
-      .attr("orient", "auto")
-      .append("path")
-      .attr("d", "M0,0 L0,6 L9,3 z")
-      .attr("class", "arrow");
-
-    // ===== HELPER: ORTHOGONAL PATH (90 DEGREES) =====
-    function getOrthogonalPath(fromNode, toNode) {
-      const x1 = fromNode.position.x + fromNode.width;  // Right edge of source
-      const y1 = fromNode.position.y + fromNode.height / 2;
-      
-      const x2 = toNode.position.x;  // Left edge of target
-      const y2 = toNode.position.y + toNode.height / 2;
-
-      const arrowOffset = 2;
-      
-      // Mid point for the turn
-      const midX = (x1 + x2) / 2;
-      
-      // Orthogonal path: horizontal → vertical → horizontal
-      return `M${x1},${y1} L${midX},${y1} L${midX},${y2} L${x2 - arrowOffset},${y2}`;
+    // --- 1. LOAD DATA ---
+    async function loadData() {
+      try {
+        const response = await fetch('./types.json');
+        if (!response.ok) throw new Error("Could not load types.json");
+        const json = await response.json();
+        
+        processGraph(json.nodes);
+        initGraph();
+        document.getElementById('loading').style.display = 'none';
+      } catch (err) {
+        document.getElementById('loading').textContent = "Error: " + err.message + ". (Open via Live Server!)";
+      }
     }
 
-    // ===== DRAW EDGES =====
-    const nodeMap = new Map(nodes.map(n => [n.id, n]));
-
-    svg.selectAll(".link")
-      .data(edges)
-      .enter()
-      .append("path")
-      .attr("class", "link")
-      .attr("d", d => {
-        const from = nodeMap.get(d.from);
-        const to = nodeMap.get(d.to);
-        if (!from || !to) return "";
-        return getOrthogonalPath(from, to);
+    // --- 2. AUTO-LAYOUT ALGORITHM (Simple Layered Layout) ---
+    // Converts the user's "prerequisites" into X/Y coordinates automatically
+    function processGraph(rawNodes) {
+      const nodeMap = new Map();
+      
+      // Step A: Initialize nodes
+      rawNodes.forEach(n => {
+        nodeMap.set(n.id, { ...n, level: 0, children: [], parents: [] });
       });
 
-    // ===== DRAW NODES =====
-    const node = svg.selectAll(".node")
-      .data(nodes)
-      .enter()
-      .append("g")
-      .attr("class", d => `node ${progress[d.id] ? 'completed' : ''}`)
-      .attr("transform", d => `translate(${d.position.x}, ${d.position.y})`);
+      // Step B: Build Links & Relationships
+      linksData = [];
+      rawNodes.forEach(n => {
+        if (n.prerequisites) {
+          n.prerequisites.forEach(parentId => {
+            if (nodeMap.has(parentId)) {
+              linksData.push({ source: parentId, target: n.id });
+              nodeMap.get(parentId).children.push(n.id);
+              nodeMap.get(n.id).parents.push(parentId);
+            }
+          });
+        }
+      });
 
-    node.append("rect")
-      .attr("width", d => d.width)
-      .attr("height", d => d.height);
+      // Step C: Calculate Levels (Longest Path) for Y coordinate
+      // Simple topological calc: Level = Max(Parent Levels) + 1
+      let changed = true;
+      while(changed) {
+        changed = false;
+        nodeMap.forEach(node => {
+          if (node.parents.length > 0) {
+            const maxParentLevel = Math.max(...node.parents.map(pid => nodeMap.get(pid).level));
+            if (node.level < maxParentLevel + 1) {
+              node.level = maxParentLevel + 1;
+              changed = true;
+            }
+          }
+        });
+      }
 
-    node.append("text")
-      .attr("x", d => d.width / 2)
-      .attr("y", d => d.height / 2)
-      .attr("text-anchor", "middle")
-      .attr("dy", "0.35em")
-      .text(d => d.label);
+      // Step D: Calculate X coordinate (Grouping by level)
+      const levels = {};
+      nodeMap.forEach(node => {
+        if (!levels[node.level]) levels[node.level] = [];
+        levels[node.level].push(node);
+      });
 
-    // ===== NODE CLICK =====
-    node.on("click", (event, d) => {
-      // Toggle completion
-      progress[d.id] = !progress[d.id];
-      localStorage.setItem('roadmaths-progress', JSON.stringify(progress));
-      
-      d3.select(event.currentTarget)
-        .classed("completed", progress[d.id]);
+      // Assign coordinates
+      nodesData = Array.from(nodeMap.values()).map(node => {
+        const nodesInLevel = levels[node.level];
+        const indexInLevel = nodesInLevel.indexOf(node);
+        
+        // Center alignment logic
+        const levelWidth = nodesInLevel.length * SIBLING_GAP;
+        const xOffset = indexInLevel * SIBLING_GAP - (levelWidth / 2) + (SIBLING_GAP / 2);
 
-      // Show info
-      showInfo(d);
-    });
-
-    // ===== HELPER FUNCTIONS =====
-    function showInfo(node) {
-      const info = document.getElementById("info");
-      document.getElementById("info-title").textContent = node.label;
-      document.getElementById("info-desc").textContent = node.content.description;
-      
-      const linksDiv = document.getElementById("info-links");
-      linksDiv.innerHTML = node.content.links.length > 0
-        ? node.content.links.map(link => `<a href="${link}" target="_blank">📚 Learn more</a><br>`).join('')
-        : '<p style="color: #666">No resources yet</p>';
-      
-      info.classList.add("active");
+        return {
+          ...node,
+          x: xOffset,           // Calculated X
+          y: node.level * LEVEL_GAP // Calculated Y
+        };
+      });
     }
 
-    function closeInfo() {
-      document.getElementById("info").classList.remove("active");
+    // --- 3. D3 RENDERING ---
+    function initGraph() {
+      const container = document.getElementById('canvas-container');
+      const width = container.clientWidth;
+      const height = container.clientHeight;
+
+      svg = d3.select("#svg")
+        .attr("width", "100%")
+        .attr("height", "100%");
+
+      // Arrow Marker
+      svg.append("defs").append("marker")
+        .attr("id", "arrow")
+        .attr("viewBox", "0 -5 10 10")
+        .attr("refX", NODE_WIDTH / 2 + 10) // Marker sits at edge of box
+        .attr("refY", 0)
+        .attr("markerWidth", 6)
+        .attr("markerHeight", 6)
+        .attr("orient", "auto")
+        .append("path")
+        .attr("d", "M0,-5L10,0L0,5")
+        .attr("fill", "#475569");
+
+      // Group for Zooming
+      g = svg.append("g");
+
+      // Zoom Behavior
+      zoom = d3.zoom()
+        .scaleExtent([0.1, 2])
+        .on("zoom", (e) => g.attr("transform", e.transform));
+      
+      svg.call(zoom);
+
+      // Center the view initially (Shift graph to middle of screen)
+      const initialTransform = d3.zoomIdentity.translate(width/2, 50).scale(0.8);
+      svg.call(zoom.transform, initialTransform);
+
+      render();
     }
 
-    function exportJSON() {
-      const exportData = {
-        ...roadmapData,
-        nodes: nodes.map(n => ({
-          ...n,
-          completed: !!progress[n.id]
-        }))
+    function render() {
+      // 1. Draw Links (Curved cubic bezier for elegance)
+      g.selectAll(".link")
+        .data(linksData)
+        .join("path")
+        .attr("class", "link")
+        .attr("marker-end", "url(#arrow)")
+        .attr("d", d => {
+          const src = nodesData.find(n => n.id === d.source);
+          const trg = nodesData.find(n => n.id === d.target);
+          
+          // Bezier Curve Logic: Vertical flow
+          return `M${src.x},${src.y + NODE_HEIGHT/2} 
+                  C${src.x},${src.y + NODE_HEIGHT/2 + 50} 
+                   ${trg.x},${trg.y - NODE_HEIGHT/2 - 50} 
+                   ${trg.x},${trg.y - NODE_HEIGHT/2}`;
+        });
+
+      // 2. Draw Nodes
+      const nodes = g.selectAll(".node")
+        .data(nodesData)
+        .join("g")
+        .attr("class", d => `node ${progress[d.id] ? 'completed' : ''}`)
+        .attr("transform", d => `translate(${d.x - NODE_WIDTH/2}, ${d.y - NODE_HEIGHT/2})`)
+        .on("click", (e, d) => openPanel(d));
+
+      // Node Box
+      nodes.append("rect")
+        .attr("width", NODE_WIDTH)
+        .attr("height", NODE_HEIGHT);
+
+      // Node Label (with truncation if too long)
+      nodes.append("text")
+        .attr("x", NODE_WIDTH / 2)
+        .attr("y", NODE_HEIGHT / 2)
+        .text(d => d.title.length > 20 ? d.title.substring(0,18) + '...' : d.title);
+    }
+
+    // --- 4. INTERACTIVITY ---
+    function openPanel(node) {
+      const panel = document.getElementById('panel');
+      const btn = document.getElementById('p-toggle');
+      
+      document.getElementById('p-title').textContent = node.title;
+      document.getElementById('p-id').textContent = node.id;
+      document.getElementById('p-content').textContent = node.content; // Render Markdown here if needed
+      
+      updatePanelButton(node.id);
+      
+      // Button Logic
+      btn.onclick = () => {
+        progress[node.id] = !progress[node.id];
+        localStorage.setItem('roadmap-progress', JSON.stringify(progress));
+        updatePanelButton(node.id);
+        
+        // Re-render class on SVG node
+        g.selectAll(".node")
+          .filter(d => d.id === node.id)
+          .classed("completed", progress[node.id]);
       };
-      
-      const blob = new Blob([JSON.stringify(exportData, null, 2)], 
-        { type: 'application/json' });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = 'roadmap.json';
-      a.click();
+
+      panel.classList.add('active');
+    }
+
+    function updatePanelButton(id) {
+      const btn = document.getElementById('p-toggle');
+      const isDone = progress[id];
+      btn.textContent = isDone ? "Mark as Incomplete" : "Mark as Completed";
+      btn.style.background = isDone ? "#334155" : "#10b981";
+      btn.style.color = isDone ? "#cbd5e1" : "#fff";
+      btn.style.border = "none";
+    }
+
+    function closePanel() {
+      document.getElementById('panel').classList.remove('active');
+    }
+
+    function resetView() {
+      const container = document.getElementById('canvas-container');
+      const initialTransform = d3.zoomIdentity.translate(container.clientWidth/2, 50).scale(0.8);
+      svg.transition().duration(750).call(zoom.transform, initialTransform);
     }
 
     function clearProgress() {
-      if (confirm('Clear all progress?')) {
-        localStorage.removeItem('roadmaths-progress');
+      if(confirm("Are you sure? This deletes your save.")) {
+        localStorage.removeItem('roadmap-progress');
         location.reload();
       }
     }
 
-    // Click outside to close info
-    document.addEventListener('click', (e) => {
-      if (!e.target.closest('.node') && !e.target.closest('#info')) {
-        closeInfo();
-      }
-    });
+    // Start
+    loadData();
+
   </script>
 </body>
 </html>
