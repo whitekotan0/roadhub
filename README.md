@@ -1,8 +1,9 @@
-# 🗺️ RoadMaps - Interactive Learning Paths Platform
+# 🗺️ RoadHub - Interactive Learning Paths Platform
 
 <div align="center">
 
-  <h1>✨ Transform Learning Into an Adventure</h1>
+  <h1>🚀 RoadHub</h1>
+  <h2>✨ Transform Learning Into an Adventure</h2>
   
   <p>
     <strong>Create stunning, interactive roadmaps with beautiful visualizations and track your progress like never before.</strong>
@@ -25,9 +26,9 @@
 
 ---
 
-## 💎 What is RoadMaps?
+## 💎 What is RoadHub?
 
-**RoadMaps** is a premium, open-source platform for creating, sharing, and tracking interactive learning paths. Unlike boring lists or traditional wikis, this tool transforms knowledge into **stunning visual skill trees** with:
+**RoadHub** is a premium, open-source platform for creating, sharing, and tracking interactive learning paths. Unlike boring lists or traditional wikis, this tool transforms knowledge into **stunning visual skill trees** with:
 
 - 🎨 **Glassmorphism UI** - Modern frosted-glass design
 - 🌊 **Smooth Animations** - Fluid transitions and micro-interactions

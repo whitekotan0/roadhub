@@ -3,10 +3,114 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Roadmap Architect - Visual Editor</title>
+  <title>RoadHub - Visual Editor</title>
   <link rel="stylesheet" href="style.css">
   <style>
     body { overflow: hidden; }
+    
+    .editor-layout {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      height: 100vh;
+    }
+    
+    /* Compact Roadmap Settings */
+    #roadmapProps {
+      background: var(--surface-glass);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: var(--radius-lg);
+      padding: var(--spacing-lg);
+      margin-bottom: var(--spacing-lg);
+    }
+    
+    #roadmapProps.collapsed {
+      max-height: 60px;
+      overflow: hidden;
+      cursor: pointer;
+    }
+    
+    #roadmapProps.collapsed:hover {
+      background: rgba(255, 255, 255, 0.08);
+    }
+    
+    .collapse-header {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      cursor: pointer;
+      user-select: none;
+    }
+    
+    .collapse-icon {
+      transition: transform var(--transition-base);
+    }
+    
+    #roadmapProps.collapsed .collapse-icon {
+      transform: rotate(-90deg);
+    }
+    
+    /* Node Editor - Expanded */
+    #nodeProps {
+      flex: 1;
+      display: flex;
+      flex-direction: column;
+      gap: var(--spacing-lg);
+      min-height: 0;
+    }
+    
+    .node-color-picker {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(48px, 1fr));
+      gap: 10px;
+      margin-top: 8px;
+    }
+    
+    .color-option {
+      width: 48px;
+      height: 48px;
+      border-radius: 12px;
+      cursor: pointer;
+      border: 3px solid transparent;
+      transition: all var(--transition-fast);
+      position: relative;
+      box-shadow: var(--shadow-sm);
+    }
+    
+    .color-option:hover {
+      transform: scale(1.1);
+      box-shadow: var(--shadow-md);
+    }
+    
+    .color-option.selected {
+      border-color: white;
+      box-shadow: var(--shadow-glow-primary);
+    }
+    
+    .color-option.selected::after {
+      content: '✓';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      color: white;
+      font-size: 20px;
+      font-weight: bold;
+      text-shadow: 0 0 4px rgba(0,0,0,0.5);
+    }
+    
+    .custom-color-input {
+      width: 100%;
+      height: 48px;
+      border-radius: 12px;
+      border: 2px solid rgba(255, 255, 255, 0.2);
+      cursor: pointer;
+      transition: all var(--transition-fast);
+    }
+    
+    .custom-color-input:hover {
+      border-color: var(--accent-primary);
+    }
   </style>
 </head>
 <body>
@@ -15,13 +119,13 @@
   <div class="editor-layout">
     <div id="canvas-area">
       <div class="editor-toolbar">
-        <a href="index.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; font-weight: 600; transition: all 0.2s;">
+        <a href="index.html" style="display: flex; align-items: center; gap: 10px; padding: 10px 16px; border-radius: 8px; font-weight: 600;">
           ← Home
         </a>
         <button onclick="addNewNode()" class="btn btn-primary" style="padding: 10px 20px;">
           + Node
         </button>
-        <button onclick="centerView()" class="btn btn-glass" style="padding: 10px 20px;" title="Center view">
+        <button onclick="centerView()" class="btn btn-glass" style="padding: 10px 20px;">
           🎯
         </button>
         <button onclick="downloadJSON()" class="btn btn-success" style="padding: 10px 20px;">
@@ -38,87 +142,103 @@
       </div>
       
       <div class="zoom-controls">
-        <button onclick="zoomIn()" title="Zoom in">+</button>
-        <button onclick="zoomOut()" title="Zoom out">−</button>
-        <button onclick="resetZoom()" title="Reset zoom">⌂</button>
+        <button onclick="zoomIn()">+</button>
+        <button onclick="zoomOut()">−</button>
+        <button onclick="resetZoom()">⌂</button>
       </div>
       
       <svg id="svg"></svg>
     </div>
 
     <div class="properties-panel" id="propPanel">
-      <h2>⚙️ Settings</h2>
+      <h2>⚙️ RoadHub Editor</h2>
       
-      <div id="roadmapProps">
-        <div class="form-group">
-          <label>Roadmap Title</label>
-          <input type="text" id="mapTitle" value="New Roadmap" oninput="updateMeta()" placeholder="Enter title">
+      <!-- Compact Roadmap Settings -->
+      <div id="roadmapProps" class="collapsed">
+        <div class="collapse-header" onclick="toggleRoadmapSettings()">
+          <span style="font-weight: 700; font-size: 14px; text-transform: uppercase; letter-spacing: 1px; color: var(--text-muted);">
+            Roadmap Settings
+          </span>
+          <span class="collapse-icon" style="font-size: 20px;">▼</span>
         </div>
         
-        <div class="form-group">
-          <label>Unique ID</label>
-          <input type="text" id="mapId" value="custom_map" oninput="updateMeta()" placeholder="custom_map">
-        </div>
-        
-        <div class="form-group">
-          <label>Description (Optional)</label>
-          <textarea id="mapDescription" rows="3" oninput="updateMeta()" placeholder="Short description..."></textarea>
-        </div>
-        
-        <div class="info-box">
-          <p>
-            <b>Creating Connections:</b><br>
-            Drag from any <span style="color: var(--accent-success)">● port</span> on a node to another node.<br><br>
-            <b>Deleting Links:</b><br>
-            Hover over a line and Shift+Click or Right-click.<br><br>
-            <b>Deleting Nodes:</b><br>
-            Select a node and click "Delete" button below.<br><br>
-            <b>Keyboard Shortcuts:</b><br>
-            • Ctrl+N - New node<br>
-            • Ctrl+S - Save<br>
-            • Delete - Remove node
-          </p>
+        <div style="margin-top: var(--spacing-md);">
+          <div class="form-group">
+            <label>Roadmap Title</label>
+            <input type="text" id="mapTitle" value="New Roadmap" oninput="updateMeta()" placeholder="Enter title">
+          </div>
+          
+          <div class="form-group">
+            <label>Unique ID</label>
+            <input type="text" id="mapId" value="custom_map" oninput="updateMeta()" placeholder="custom_map">
+          </div>
+          
+          <div class="form-group">
+            <label>Description</label>
+            <textarea id="mapDescription" rows="2" oninput="updateMeta()" placeholder="Short description..."></textarea>
+          </div>
         </div>
       </div>
 
-      <div id="nodeProps" style="display:none; flex-direction: column; gap: 20px;">
-        <hr style="border:0; border-top:1px solid rgba(255, 255, 255, 0.1); margin: 16px 0;">
+      <!-- Node Editor - Main Focus -->
+      <div id="nodeProps" style="display:none;">
+        <div style="padding: var(--spacing-md); background: var(--surface-glass); backdrop-filter: blur(20px); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: var(--radius-lg);">
+          <h3 style="margin: 0; font-size: 1.25rem; font-weight: 700;">
+            ✏️ Edit Node
+          </h3>
+        </div>
         
         <div class="form-group">
           <label>Node Title</label>
-          <input type="text" id="nodeTitle" oninput="updateActiveNode()" placeholder="Node title">
+          <input type="text" id="nodeTitle" oninput="updateActiveNode()" placeholder="Node title" style="font-size: 16px; padding: 16px;">
         </div>
         
         <div class="form-group">
-          <label>Type / Color</label>
-          <select id="nodeGroup" onchange="updateActiveNode()">
-            <option value="core">Core (Blue)</option>
-            <option value="gamedev">Game Dev (Green)</option>
-            <option value="ml">AI / ML (Purple)</option>
-            <option value="crypto">Crypto (Orange)</option>
-            <option value="engineering">Engineering (Red)</option>
-            <option value="research">Research (Pink)</option>
-          </select>
+          <label>Node Color</label>
+          <div class="node-color-picker">
+            <div class="color-option" style="background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);" onclick="setNodeColor('core')" data-color="core"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%);" onclick="setNodeColor('gamedev')" data-color="gamedev"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #764ba2 0%, #8b5cf6 100%);" onclick="setNodeColor('ml')" data-color="ml"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="setNodeColor('crypto')" data-color="crypto"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #ff6b6b 0%, #ee5a6f 100%);" onclick="setNodeColor('engineering')" data-color="engineering"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #f093fb 0%, #f5576c 100%);" onclick="setNodeColor('research')" data-color="research"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #ffd166 0%, #f59e0b 100%);" onclick="setNodeColor('warning')" data-color="warning"></div>
+            <div class="color-option" style="background: linear-gradient(135deg, #4facfe 0%, #00f2fe 100%);" onclick="setNodeColor('info')" data-color="info"></div>
+          </div>
+          <div style="margin-top: 12px;">
+            <input type="color" id="customColor" class="custom-color-input" onchange="setCustomColor(this.value)" value="#667eea">
+          </div>
         </div>
 
-        <div class="form-group">
+        <div class="form-group" style="flex: 1; min-height: 0; display: flex; flex-direction: column;">
           <label>Description (Markdown)</label>
-          <textarea id="nodeContent" style="height: 220px;" oninput="updateActiveNode()" placeholder="# Heading&#10;&#10;Node description...&#10;&#10;- Point 1&#10;- Point 2"></textarea>
-          <small style="color: var(--text-muted); font-size: 11px; margin-top: 4px;">
+          <textarea id="nodeContent" oninput="updateActiveNode()" placeholder="# Heading&#10;&#10;Node description...&#10;&#10;- Point 1&#10;- Point 2" style="flex: 1; min-height: 200px; font-size: 14px; line-height: 1.6;"></textarea>
+          <small style="color: var(--text-muted); font-size: 11px; margin-top: 6px;">
             Supports Markdown: # headers, **bold**, *italic*, - lists
           </small>
         </div>
         
         <div class="form-group">
-          <label>Prerequisites</label>
-          <div id="prerequisites-list" style="min-height: 60px; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px; margin-top: 8px;">
-            <p style="color: var(--text-muted); font-size: 12px; margin: 0;">Select nodes to create links</p>
+          <label>Prerequisites (Connected Nodes)</label>
+          <div id="prerequisites-list" style="max-height: 150px; overflow-y: auto; padding: 12px; background: var(--bg-tertiary); border: 1px solid rgba(255, 255, 255, 0.1); border-radius: 12px;">
+            <p style="color: var(--text-muted); font-size: 12px; margin: 0;">Drag connections to create prerequisites</p>
           </div>
         </div>
 
-        <button onclick="deleteSelectedNode()" class="btn btn-danger" style="width: 100%; justify-content: center; margin-top: auto;">
+        <button onclick="deleteSelectedNode()" class="btn btn-danger" style="width: 100%; justify-content: center; padding: 16px; font-size: 16px;">
           🗑️ Delete Node
         </button>
+      </div>
+      
+      <!-- Help Box -->
+      <div class="info-box" id="helpBox" style="margin-top: auto;">
+        <p style="margin: 0; font-size: 12px; line-height: 1.6;">
+          <b>💡 Quick Tips:</b><br>
+          • Drag from <span style="color: var(--accent-success);">● ports</span> to connect nodes<br>
+          • Shift+Click on link to delete<br>
+          • Ctrl+N for new node<br>
+          • Ctrl+S to save
+        </p>
       </div>
     </div>
   </div>
@@ -129,7 +249,7 @@
     // Theme
     function toggleTheme() {
       document.body.classList.toggle('light-theme');
-      const isLight = document.body.classList.toggle('light-theme');
+      const isLight = document.body.classList.contains('light-theme');
       localStorage.setItem('theme', isLight ? 'light' : 'dark');
       document.getElementById('theme-btn').textContent = isLight ? '🌙' : '☀️';
     }
@@ -138,10 +258,26 @@
       document.body.classList.add('light-theme');
       document.getElementById('theme-btn').textContent = '🌙';
     }
+    
+    function toggleRoadmapSettings() {
+      document.getElementById('roadmapProps').classList.toggle('collapsed');
+    }
 
     // CONFIG
     const NODE_W = 200;
     const NODE_H = 90;
+
+    // COLOR MAPPING
+    const COLOR_MAP = {
+      core: { stroke: '#667eea', fill: 'linear-gradient(135deg, rgba(102, 126, 234, 0.2), rgba(118, 75, 162, 0.2))' },
+      gamedev: { stroke: '#11998e', fill: 'linear-gradient(135deg, rgba(17, 153, 142, 0.2), rgba(56, 239, 125, 0.2))' },
+      ml: { stroke: '#8b5cf6', fill: 'linear-gradient(135deg, rgba(139, 92, 246, 0.2), rgba(139, 92, 246, 0.2))' },
+      crypto: { stroke: '#f5576c', fill: 'linear-gradient(135deg, rgba(245, 87, 108, 0.2), rgba(240, 147, 251, 0.2))' },
+      engineering: { stroke: '#ff6b6b', fill: 'linear-gradient(135deg, rgba(255, 107, 107, 0.2), rgba(238, 90, 111, 0.2))' },
+      research: { stroke: '#f093fb', fill: 'linear-gradient(135deg, rgba(240, 147, 251, 0.2), rgba(245, 87, 108, 0.2))' },
+      warning: { stroke: '#ffd166', fill: 'linear-gradient(135deg, rgba(255, 209, 102, 0.2), rgba(245, 158, 11, 0.2))' },
+      info: { stroke: '#00f2fe', fill: 'linear-gradient(135deg, rgba(79, 172, 254, 0.2), rgba(0, 242, 254, 0.2))' }
+    };
 
     // DATA STATE
     let roadmapData = { 
@@ -151,11 +287,9 @@
       nodes: [] 
     };
     
-    // UI STATE
     let svg, gNodes, gLinks, zoom, container;
     let selectedNodeId = null;
     let drawingLine = null;
-    let currentZoom = 1;
     
     const PORTS = [
       [NODE_W/2, 0, 'top'],
@@ -164,21 +298,22 @@
       [0, NODE_H/2, 'left']
     ];
 
-    // INIT
     function init() {
       container = document.getElementById('canvas-area');
       svg = d3.select("#svg").attr("width", "100%").attr("height", "100%");
       
       const defs = svg.append("defs");
       
-      // Gradient arrow
-      const arrowGrad = defs.append("linearGradient")
-        .attr("id", "arrow-grad")
-        .attr("x1", "0%").attr("y1", "0%")
-        .attr("x2", "100%").attr("y2", "0%");
-      
-      arrowGrad.append("stop").attr("offset", "0%").attr("stop-color", "var(--accent-primary)").attr("stop-opacity", 0.5);
-      arrowGrad.append("stop").attr("offset", "100%").attr("stop-color", "var(--accent-primary)").attr("stop-opacity", 1);
+      // Create gradient for each color
+      Object.keys(COLOR_MAP).forEach(key => {
+        const grad = defs.append("linearGradient")
+          .attr("id", `grad-${key}`)
+          .attr("x1", "0%").attr("y1", "0%")
+          .attr("x2", "100%").attr("y2", "100%");
+        
+        grad.append("stop").attr("offset", "0%").attr("stop-color", COLOR_MAP[key].stroke).attr("stop-opacity", 0.3);
+        grad.append("stop").attr("offset", "100%").attr("stop-color", COLOR_MAP[key].stroke).attr("stop-opacity", 0.1);
+      });
       
       defs.append("marker")
         .attr("id", "arrow")
@@ -190,7 +325,7 @@
         .attr("orient", "auto")
         .append("path")
         .attr("d", "M0,-5L10,0L0,5")
-        .attr("fill", "url(#arrow-grad)");
+        .attr("fill", "var(--accent-primary)");
 
       const gContainer = svg.append("g");
       gLinks = gContainer.append("g");
@@ -200,10 +335,7 @@
 
       zoom = d3.zoom()
         .scaleExtent([0.1, 3])
-        .on("zoom", e => {
-          gContainer.attr("transform", e.transform);
-          currentZoom = e.transform.k;
-        });
+        .on("zoom", e => gContainer.attr("transform", e.transform));
       svg.call(zoom).on("dblclick.zoom", null);
       
       svg.on("mousemove", e => {
@@ -233,8 +365,7 @@
 
     function findNodeAtPosition(x, y) {
       return roadmapData.nodes.find(n => {
-        return x >= n.x && x <= n.x + NODE_W &&
-               y >= n.y && y <= n.y + NODE_H;
+        return x >= n.x && x <= n.x + NODE_W && y >= n.y && y <= n.y + NODE_H;
       });
     }
 
@@ -255,13 +386,8 @@
       linkSel.enter().append("path")
         .attr("class", "link")
         .attr("marker-end", "url(#arrow)")
-        .on("click", (e, d) => {
-          if (e.shiftKey) deleteLink(d);
-        })
-        .on("contextmenu", (e, d) => {
-          e.preventDefault();
-          deleteLink(d);
-        })
+        .on("click", (e, d) => { if (e.shiftKey) deleteLink(d); })
+        .on("contextmenu", (e, d) => { e.preventDefault(); deleteLink(d); })
         .merge(linkSel)
         .attr("d", d => calculateBezier(d.src, d.tgt));
 
@@ -302,8 +428,25 @@
 
       const allNodes = nodeEnter.merge(nodeSel);
       allNodes.attr("transform", d => `translate(${d.x}, ${d.y})`);
-      allNodes.attr("data-group", d => d.group || 'core');
       allNodes.classed("selected", d => d.id === selectedNodeId);
+      
+      allNodes.select("rect.body")
+        .style("fill", d => {
+          const group = d.group || 'core';
+          const customColor = d.customColor;
+          if (customColor) {
+            return customColor;
+          }
+          return `url(#grad-${group})`;
+        })
+        .style("stroke", d => {
+          const customColor = d.customColor;
+          if (customColor) {
+            return customColor;
+          }
+          return COLOR_MAP[d.group || 'core'].stroke;
+        });
+      
       allNodes.select("text").text(d => {
         const maxLen = 22;
         return d.title.length > maxLen ? d.title.substr(0, maxLen-3) + '...' : d.title;
@@ -318,96 +461,53 @@
     }
 
     function calculateBezier(src, tgt) {
-      const sx = src.x + NODE_W/2;
-      const sy = src.y + NODE_H/2;
-      const tx = tgt.x + NODE_W/2;
-      const ty = tgt.y + NODE_H/2;
-      const dx = tx - sx;
-      const dy = ty - sy;
+      const sx = src.x + NODE_W/2, sy = src.y + NODE_H/2;
+      const tx = tgt.x + NODE_W/2, ty = tgt.y + NODE_H/2;
+      const dx = tx - sx, dy = ty - sy;
       
-      let start = {x: sx, y: src.y + NODE_H};
-      let end = {x: tx, y: tgt.y};
-
+      let start = {x: sx, y: src.y + NODE_H}, end = {x: tx, y: tgt.y};
       if (Math.abs(dx) > Math.abs(dy)) {
-        if(dx > 0) {
-          start = {x: src.x + NODE_W, y: sy};
-          end = {x: tgt.x, y: ty};
-        } else {
-          start = {x: src.x, y: sy};
-          end = {x: tgt.x + NODE_W, y: ty};
-        }
+        start = dx > 0 ? {x: src.x + NODE_W, y: sy} : {x: src.x, y: sy};
+        end = dx > 0 ? {x: tgt.x, y: ty} : {x: tgt.x + NODE_W, y: ty};
       } else {
-        if(dy > 0) {
-          start = {x: sx, y: src.y + NODE_H};
-          end = {x: tx, y: tgt.y};
-        } else {
-          start = {x: sx, y: src.y};
-          end = {x: tx, y: tgt.y + NODE_H};
-        }
+        start = dy > 0 ? {x: sx, y: src.y + NODE_H} : {x: sx, y: src.y};
+        end = dy > 0 ? {x: tx, y: tgt.y} : {x: tx, y: tgt.y + NODE_H};
       }
-
       const dist = Math.sqrt(dx*dx + dy*dy) * 0.5;
-      
-      if (Math.abs(dy) > Math.abs(dx)) {
-        return `M${start.x},${start.y} C${start.x},${start.y + dist} ${end.x},${end.y - dist} ${end.x},${end.y}`;
-      } else {
-        return `M${start.x},${start.y} C${start.x + dist},${start.y} ${end.x - dist},${end.y} ${end.x},${end.y}`;
-      }
+      return Math.abs(dy) > Math.abs(dx) 
+        ? `M${start.x},${start.y} C${start.x},${start.y + dist} ${end.x},${end.y - dist} ${end.x},${end.y}`
+        : `M${start.x},${start.y} C${start.x + dist},${start.y} ${end.x - dist},${end.y} ${end.x},${end.y}`;
     }
 
     function startDrawing(e, d, port) {
-      e.stopPropagation();
-      const startX = d.x + port[0];
-      const startY = d.y + port[1];
-      drawingLine = { sourceId: d.id, startX, startY };
+      drawingLine = { sourceId: d.id, startX: d.x + port[0], startY: d.y + port[1] };
     }
 
     function finishDrawing(targetNode) {
-      if (!drawingLine) return;
-      const sourceId = drawingLine.sourceId;
-      const targetId = targetNode.id;
-      if (sourceId === targetId) {
+      if (!drawingLine || drawingLine.sourceId === targetNode.id) {
         drawingLine = null;
         d3.select(".temp-link").attr("d", "");
         return;
       }
-      const targetNodeData = roadmapData.nodes.find(n => n.id === targetId);
+      const targetNodeData = roadmapData.nodes.find(n => n.id === targetNode.id);
       if (!targetNodeData.prerequisites) targetNodeData.prerequisites = [];
-      if (!targetNodeData.prerequisites.includes(sourceId)) {
-        targetNodeData.prerequisites.push(sourceId);
+      if (!targetNodeData.prerequisites.includes(drawingLine.sourceId)) {
+        targetNodeData.prerequisites.push(drawingLine.sourceId);
         render();
       }
       drawingLine = null;
       d3.select(".temp-link").attr("d", "");
     }
 
-    function dragStart(e, d) {
-      d3.select(this).raise();
-      selectNode(d.id);
-    }
-    
-    function dragging(e, d) {
-      d.x = e.x;
-      d.y = e.y;
-      d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`);
-      render();
-    }
-    
+    function dragStart(e, d) { d3.select(this).raise(); selectNode(d.id); }
+    function dragging(e, d) { d.x = e.x; d.y = e.y; d3.select(this).attr("transform", `translate(${d.x}, ${d.y})`); render(); }
     function dragEnd(e, d) {}
 
     function addNewNode() {
       const id = "node_" + Date.now();
-      const centerX = container.clientWidth / 2;
-      const centerY = container.clientHeight / 2;
-      
       roadmapData.nodes.push({
-        id,
-        title: "New Node",
-        group: "core",
-        content: "# New Node\n\nDescription...",
-        prerequisites: [],
-        x: centerX - NODE_W/2,
-        y: centerY - NODE_H/2
+        id, title: "New Node", group: "core", content: "# New Node\n\nDescription...",
+        prerequisites: [], x: container.clientWidth / 2 - NODE_W/2, y: container.clientHeight / 2 - NODE_H/2
       });
       render();
       selectNode(id);
@@ -415,30 +515,58 @@
 
     function selectNode(id) {
       selectedNodeId = id;
-      render();
       const n = roadmapData.nodes.find(x => x.id === id);
       if(!n) return;
 
-      document.getElementById('roadmapProps').style.display = 'none';
+      document.getElementById('roadmapProps').classList.add('collapsed');
       document.getElementById('nodeProps').style.display = 'flex';
+      document.getElementById('helpBox').style.display = 'none';
       
       document.getElementById('nodeTitle').value = n.title;
-      document.getElementById('nodeGroup').value = n.group || 'core';
       document.getElementById('nodeContent').value = n.content || '';
       
+      // Update color picker
+      document.querySelectorAll('.color-option').forEach(el => {
+        el.classList.remove('selected');
+        if (el.dataset.color === n.group) el.classList.add('selected');
+      });
+      
+      if (n.customColor) {
+        document.getElementById('customColor').value = n.customColor;
+      }
+      
+      render();
       updatePrerequisitesList();
+    }
+    
+    function setNodeColor(group) {
+      if(!selectedNodeId) return;
+      const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
+      n.group = group;
+      delete n.customColor; // Remove custom color
+      document.querySelectorAll('.color-option').forEach(el => {
+        el.classList.remove('selected');
+        if (el.dataset.color === group) el.classList.add('selected');
+      });
+      render();
+    }
+    
+    function setCustomColor(color) {
+      if(!selectedNodeId) return;
+      const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
+      n.customColor = color;
+      document.querySelectorAll('.color-option').forEach(el => el.classList.remove('selected'));
+      render();
     }
 
     function updatePrerequisitesList() {
       const node = roadmapData.nodes.find(n => n.id === selectedNodeId);
       if (!node) return;
-      
       const list = document.getElementById('prerequisites-list');
       const prereqs = (node.prerequisites || []).map(pId => {
         const prereqNode = roadmapData.nodes.find(n => n.id === pId);
         return prereqNode ? prereqNode.title : pId;
       });
-      
       if (prereqs.length === 0) {
         list.innerHTML = '<p style="color: var(--text-muted); font-size: 12px; margin: 0;">No prerequisites</p>';
       } else {
@@ -446,7 +574,7 @@
           const pId = node.prerequisites[idx];
           return `<div style="display: flex; justify-content: space-between; align-items: center; padding: 10px; background: var(--bg-secondary); border-radius: 8px; margin-bottom: 6px;">
             <span style="font-size: 13px; color: var(--text-primary);">${title}</span>
-            <button onclick="removePrerequisite('${pId}')" class="btn btn-danger" style="padding: 6px 12px; font-size: 12px;">×</button>
+            <button onclick="removePrerequisite('${pId}')" class="btn btn-danger" style="padding: 4px 10px; font-size: 12px;">×</button>
           </div>`;
         }).join('');
       }
@@ -454,7 +582,7 @@
 
     function removePrerequisite(pId) {
       const node = roadmapData.nodes.find(n => n.id === selectedNodeId);
-      if (node && node.prerequisites) {
+      if (node?.prerequisites) {
         node.prerequisites = node.prerequisites.filter(id => id !== pId);
         render();
         updatePrerequisitesList();
@@ -465,28 +593,26 @@
       if(!selectedNodeId) return;
       const n = roadmapData.nodes.find(x => x.id === selectedNodeId);
       n.title = document.getElementById('nodeTitle').value;
-      n.group = document.getElementById('nodeGroup').value;
       n.content = document.getElementById('nodeContent').value;
       render();
     }
 
     function deleteSelectedNode() {
-      if(!selectedNodeId) return;
-      if (!confirm("Delete this node? All connections will also be removed.")) return;
-      
+      if(!selectedNodeId || !confirm("Delete this node?")) return;
       roadmapData.nodes = roadmapData.nodes.filter(n => n.id !== selectedNodeId);
       roadmapData.nodes.forEach(n => {
         if(n.prerequisites) n.prerequisites = n.prerequisites.filter(p => p !== selectedNodeId);
       });
       selectedNodeId = null;
       document.getElementById('nodeProps').style.display = 'none';
-      document.getElementById('roadmapProps').style.display = 'block';
+      document.getElementById('roadmapProps').classList.remove('collapsed');
+      document.getElementById('helpBox').style.display = 'block';
       render();
     }
 
     function deleteLink(data) {
       const tgt = roadmapData.nodes.find(n => n.id === data.tgt.id);
-      if (tgt && tgt.prerequisites) {
+      if (tgt?.prerequisites) {
         tgt.prerequisites = tgt.prerequisites.filter(pid => pid !== data.src.id);
         render();
         if (selectedNodeId === data.tgt.id) updatePrerequisitesList();
@@ -494,43 +620,33 @@
     }
 
     function downloadJSON() {
-      const dataStr = JSON.stringify(roadmapData, null, 2);
-      const dataBlob = new Blob([dataStr], {type: 'application/json'});
-      const url = URL.createObjectURL(dataBlob);
+      const blob = new Blob([JSON.stringify(roadmapData, null, 2)], {type: 'application/json'});
       const a = document.createElement('a');
-      a.href = url;
-      a.download = (document.getElementById('mapTitle').value || 'roadmap').replace(/\s+/g, '_') + ".json";
+      a.href = URL.createObjectURL(blob);
+      a.download = (roadmapData.title || 'roadmap').replace(/\s+/g, '_') + ".json";
       a.click();
-      URL.revokeObjectURL(url);
     }
 
-    function loadJSON() {
-      document.getElementById('load-input').click();
-    }
+    function loadJSON() { document.getElementById('load-input').click(); }
 
     function handleFileLoad(input) {
       const file = input.files[0];
       if (!file) return;
-      
       const reader = new FileReader();
-      reader.onload = function(e) {
+      reader.onload = e => {
         try {
           const json = JSON.parse(e.target.result);
-          if (!json.nodes || !Array.isArray(json.nodes)) {
-            throw new Error('Invalid format: expected "nodes" array');
-          }
-          
+          if (!json.nodes) throw new Error('Invalid format');
           roadmapData = json;
           selectedNodeId = null;
           document.getElementById('mapTitle').value = json.title || 'Roadmap';
           document.getElementById('mapId').value = json.id || 'custom_map';
           document.getElementById('mapDescription').value = json.description || '';
           document.getElementById('nodeProps').style.display = 'none';
-          document.getElementById('roadmapProps').style.display = 'block';
+          document.getElementById('roadmapProps').classList.remove('collapsed');
+          document.getElementById('helpBox').style.display = 'block';
           render();
-        } catch (err) {
-          alert("Loading error: " + err.message);
-        }
+        } catch (err) { alert("Error: " + err.message); }
       };
       reader.readAsText(file);
     }
@@ -543,8 +659,7 @@
 
     function updateCounts() {
       document.getElementById('node-count').textContent = roadmapData.nodes.length;
-      const linkCount = roadmapData.nodes.reduce((sum, n) => sum + (n.prerequisites?.length || 0), 0);
-      document.getElementById('link-count').textContent = linkCount;
+      document.getElementById('link-count').textContent = roadmapData.nodes.reduce((sum, n) => sum + (n.prerequisites?.length || 0), 0);
     }
 
     function centerView() {
@@ -552,57 +667,26 @@
         svg.call(zoom.transform, d3.zoomIdentity.translate(200, 150).scale(0.8));
         return;
       }
-      
-      const bounds = roadmapData.nodes.reduce((acc, n) => {
-        return {
-          minX: Math.min(acc.minX, n.x),
-          maxX: Math.max(acc.maxX, n.x + NODE_W),
-          minY: Math.min(acc.minY, n.y),
-          maxY: Math.max(acc.maxY, n.y + NODE_H)
-        };
-      }, { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity });
-      
-      const width = bounds.maxX - bounds.minX;
-      const height = bounds.maxY - bounds.minY;
-      const centerX = bounds.minX + width / 2;
-      const centerY = bounds.minY + height / 2;
-      
-      const scale = Math.min(
-        (container.clientWidth * 0.8) / width,
-        (container.clientHeight * 0.8) / height,
-        1
-      );
-      
-      svg.transition().duration(750).call(zoom.transform, d3.zoomIdentity
-        .translate(container.clientWidth / 2 - centerX * scale, container.clientHeight / 2 - centerY * scale)
-        .scale(scale));
+      const bounds = roadmapData.nodes.reduce((acc, n) => ({
+        minX: Math.min(acc.minX, n.x), maxX: Math.max(acc.maxX, n.x + NODE_W),
+        minY: Math.min(acc.minY, n.y), maxY: Math.max(acc.maxY, n.y + NODE_H)
+      }), { minX: Infinity, maxX: -Infinity, minY: Infinity, maxY: -Infinity });
+      const w = bounds.maxX - bounds.minX, h = bounds.maxY - bounds.minY;
+      const cx = bounds.minX + w/2, cy = bounds.minY + h/2;
+      const scale = Math.min((container.clientWidth * 0.8) / w, (container.clientHeight * 0.8) / h, 1);
+      svg.transition().duration(750).call(zoom.transform, 
+        d3.zoomIdentity.translate(container.clientWidth/2 - cx*scale, container.clientHeight/2 - cy*scale).scale(scale));
     }
 
-    function zoomIn() {
-      svg.transition().call(zoom.scaleBy, 1.2);
-    }
+    function zoomIn() { svg.transition().call(zoom.scaleBy, 1.2); }
+    function zoomOut() { svg.transition().call(zoom.scaleBy, 0.8); }
+    function resetZoom() { svg.transition().call(zoom.transform, d3.zoomIdentity.translate(200, 150).scale(0.8)); }
 
-    function zoomOut() {
-      svg.transition().call(zoom.scaleBy, 0.8);
-    }
-
-    function resetZoom() {
-      svg.transition().call(zoom.transform, d3.zoomIdentity.translate(200, 150).scale(0.8));
-    }
-
-    // Keyboard shortcuts
-    document.addEventListener('keydown', (e) => {
+    document.addEventListener('keydown', e => {
       if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-      
-      if (e.key === 'Delete' || e.key === 'Backspace') {
-        if (selectedNodeId) deleteSelectedNode();
-      } else if (e.key === 'n' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        addNewNode();
-      } else if (e.key === 's' && (e.ctrlKey || e.metaKey)) {
-        e.preventDefault();
-        downloadJSON();
-      }
+      if (e.key === 'Delete' || e.key === 'Backspace') { if (selectedNodeId) deleteSelectedNode(); }
+      else if (e.key === 'n' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); addNewNode(); }
+      else if (e.key === 's' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); downloadJSON(); }
     });
 
     init();
