@@ -1,26 +1,14 @@
-# 🗺️ RoadHub - Interactive Learning Paths Platform
-
 <div align="center">
 
-  <h1>🚀 RoadHub</h1>
-  <h2>✨ Transform Learning Into an Adventure</h2>
-  
-  <p>
-    <strong>Create stunning, interactive roadmaps with beautiful visualizations and track your progress like never before.</strong>
-  </p>
+# 🗺️ RoadHub
 
-  <p>
-    <a href="#-features">Features</a> •
-    <a href="#-quick-start">Quick Start</a> •
-    <a href="#-create-roadmaps">Create</a> •
-    <a href="#-keyboard-shortcuts">Shortcuts</a>
-  </p>
+### Transform Learning Into an Interactive Adventure
 
-  <br>
+**Create stunning, interactive roadmaps with beautiful visualizations and track your progress like never before.**
 
-  <img src="https://img.shields.io/badge/Design-Premium-blueviolet?style=for-the-badge" alt="Design">
-  <img src="https://img.shields.io/badge/UI-Glassmorphism-blue?style=for-the-badge" alt="UI">
-  <img src="https://img.shields.io/badge/Status-Production-success?style=for-the-badge" alt="Status">
+[🌐 Live Demo](https://roadhub.online/) • [📖 Documentation](#-features) • [🚀 Quick Start](#-quick-start)
+
+<img width="100%" alt="RoadHub Interface" src="https://img.shields.io/badge/Design-Glassmorphism-8B5CF6?style=for-the-badge&logo=tailwindcss&logoColor=white" />
 
 </div>
 
@@ -28,92 +16,87 @@
 
 ## 💎 What is RoadHub?
 
-**RoadHub** is a premium, open-source platform for creating, sharing, and tracking interactive learning paths. Unlike boring lists or traditional wikis, this tool transforms knowledge into **stunning visual skill trees** with:
+**RoadHub** is a premium open-source platform for creating, sharing, and exploring interactive learning paths. Transform knowledge into **stunning visual skill trees** with modern design and intuitive controls.
 
-- 🎨 **Glassmorphism UI** - Modern frosted-glass design
-- 🌊 **Smooth Animations** - Fluid transitions and micro-interactions
-- 🎯 **Drag & Drop Editor** - Intuitive visual roadmap creation
-- 📊 **Progress Tracking** - Gamified learning experience
-- 🌓 **Dark/Light Themes** - Beautiful in any mode
-- 🔒 **Privacy First** - No accounts, no tracking, your data stays local
+### ✨ Key Features
 
----
-
-## ✨ Features
-
-### 🎨 Premium Design System
-- **Glassmorphism** - Frosted glass effects with backdrop blur
-- **Gradient Accents** - Vibrant color gradients throughout
-- **Smooth Animations** - Every interaction feels premium
-- **Responsive** - Works beautifully on all devices
-
-### 🖼️ Visual Drag-and-Drop Editor
-- **Infinite Canvas** - Pan and zoom freely
-- **Smart Linking** - Drag from ports to create beautiful curves
-- **Real-time Preview** - See changes instantly
-- **Auto Layout** - Automatic or manual node positioning
-- **Color-coded Categories** - 6 theme colors (Core, GameDev, ML, Crypto, Engineering, Research)
-
-### 🧭 Interactive Viewer
-- **Progress Tracking** - Mark nodes as completed
-- **Auto-Save** - Progress saved to localStorage
-- **Markdown Support** - Rich content with full markdown rendering
-- **Smart Curves** - Beautiful Bezier connections
-- **Zoom Controls** - Easy navigation
-
-### 📂 Open Architecture
-- **JSON Based** - Simple, version-control friendly format
-- **Offline First** - Runs entirely in browser
-- **Local Loading** - Open files directly from your computer
-- **Export/Import** - Full control over your data
-
----
-
-## ⚡ Quick Start
-
-### Option 1: Use Online
-Just open `index.html` in any modern browser!
-
-### Option 2: Local Server (Recommended)
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd roadmaps
-
-# Start a local server
-python -m http.server 8000
-
-# Open in browser
-# http://localhost:8000
+```
+🎨 Glassmorphism UI      Modern frosted-glass design with vibrant gradients
+🎯 Drag & Drop Editor    Intuitive visual roadmap creation
+📊 Progress Tracking     Gamified learning experience with auto-save
+🌓 Dark/Light Themes     Beautiful in any mode
+🔒 Privacy First         No accounts, no tracking, your data stays local
+⚡ Offline First         Runs entirely in browser
 ```
 
 ---
 
-## 🎨 Create Roadmaps
+## 🚀 Quick Start
+
+### Online Version
+Visit **[roadhub.online](https://roadhub.online/)** - No installation required!
+
+### Local Development
+
+```bash
+# Clone the repository
+git clone https://github.com/whitekotan0/roadhub.git
+cd roadhub
+
+# Start local server
+python -m http.server 8000
+
+# Open http://localhost:8000
+```
+
+---
+
+## 🎨 Features
+
+### Visual Editor
+- **Infinite Canvas** - Pan and zoom freely with smooth animations
+- **Smart Linking** - Drag from connection ports to create beautiful curves
+- **Real-time Preview** - See your changes instantly
+- **Color-coded Categories** - 6 theme colors for different topics
+- **Auto Layout** - Automatic or manual node positioning
+
+### Interactive Viewer
+- **Progress Tracking** - Mark nodes as completed, track your journey
+- **Markdown Support** - Rich content with full markdown rendering
+- **Smart Navigation** - Zoom controls and smooth panning
+- **Auto-Save** - Progress automatically saved to localStorage
+
+### Technical Excellence
+- **JSON Based** - Simple, version-control friendly format
+- **No Dependencies** - Pure HTML, CSS, and JavaScript
+- **Responsive Design** - Works beautifully on all devices
+- **Export/Import** - Full control over your data
+
+---
+
+## 🖼️ Creating Roadmaps
 
 ### Using the Visual Editor
 
-1. **Open Editor** - Click "Create New" on home page
-2. **Add Nodes** - Click "+ Node" or press `Ctrl+N`
-3. **Customize** - Select node and edit properties in right panel
-4. **Create Links** - Drag from ● port on one node to another
-5. **Save** - Click "💾 Save" or press `Ctrl+S`
+1. Click **"Create New"** on the home page
+2. Add nodes with **`Ctrl+N`** or the "+ Node" button
+3. Select a node to customize in the properties panel
+4. Drag from ● ports to create connections
+5. Save with **`Ctrl+S`** or the 💾 button
 
 ### JSON Format
-
-Roadmaps are stored as simple JSON files:
 
 ```json
 {
   "id": "my_roadmap",
   "title": "My Learning Path",
-  "description": "Short description",
+  "description": "A custom learning journey",
   "nodes": [
     {
       "id": "node1",
-      "title": "Node Title",
+      "title": "Getting Started",
       "group": "core",
-      "content": "# Description\n\nMarkdown content...",
+      "content": "# Introduction\n\nMarkdown content here...",
       "prerequisites": [],
       "x": 200,
       "y": 150
@@ -122,116 +105,114 @@ Roadmaps are stored as simple JSON files:
 }
 ```
 
-### Node Color Groups
-- `core` - Blue (Main concepts)
-- `gamedev` - Green (Game development)
-- `ml` - Purple (AI/ML)
-- `crypto` - Orange (Blockchain/Crypto)
-- `engineering` - Red (Engineering)
-- `research` - Pink (Research topics)
+### Color Groups
+
+| Group | Color | Use Case |
+|-------|-------|----------|
+| `core` | 🔵 Blue | Main concepts and fundamentals |
+| `gamedev` | 🟢 Green | Game development topics |
+| `ml` | 🟣 Purple | AI/ML and data science |
+| `crypto` | 🟠 Orange | Blockchain and cryptocurrency |
+| `engineering` | 🔴 Red | Software engineering |
+| `research` | 🌸 Pink | Research and advanced topics |
 
 ---
 
 ## ⌨️ Keyboard Shortcuts
 
-### Editor
-- `Ctrl+N` / `Cmd+N` - New node
-- `Ctrl+S` / `Cmd+S` - Save roadmap
-- `Delete` / `Backspace` - Delete selected node
-- `Shift+Click` on link - Delete link
+### Editor Mode
+| Shortcut | Action |
+|----------|--------|
+| `Ctrl+N` / `Cmd+N` | Create new node |
+| `Ctrl+S` / `Cmd+S` | Save roadmap |
+| `Delete` / `Backspace` | Delete selected node |
+| `Shift+Click` on link | Delete connection |
 
-### Viewer
-- `Mouse Wheel` - Zoom in/out
-- `Click+Drag` - Pan canvas
-- `Click Node` - View details
+### Viewer Mode
+| Action | Control |
+|--------|---------|
+| Pan Canvas | Click + Drag |
+| Zoom | Mouse Wheel |
+| View Details | Click Node |
 
 ---
 
 ## 🛠️ Technology Stack
 
-- **HTML5 / CSS3** - Modern layout with CSS Grid, Flexbox, Glassmorphism
-- **Vanilla JavaScript** - No framework dependencies
-- **D3.js v7** - Powerful graph visualization
-- **Marked.js** - Markdown rendering
-- **LocalStorage** - Progress persistence
+<div align="center">
+
+| Technology | Purpose |
+|------------|---------|
+| **HTML5 / CSS3** | Modern layout with Glassmorphism |
+| **Vanilla JavaScript** | Zero framework dependencies |
+| **D3.js v7** | Powerful graph visualization |
+| **Marked.js** | Markdown rendering |
+| **LocalStorage** | Progress persistence |
+
+</div>
+
+---
+
+## 🎯 Design Philosophy
+
+### Glassmorphism
+Modern frosted glass aesthetic with `backdrop-filter: blur()`, semi-transparent backgrounds, and subtle elevation.
+
+### Color System
+Premium dark theme with mesh gradients, vibrant accent colors, and a carefully crafted light mode alternative.
+
+### Animations
+Smooth transitions using cubic-bezier curves, hover effects on interactive elements, and delightful micro-interactions.
+
+### Typography
+System font stack for optimal performance, clear visual hierarchy, and comfortable reading experience.
 
 ---
 
 ## 📁 Project Structure
 
 ```
-roadmaps/
+roadhub/
 ├── index.html          # Landing page
 ├── editor.html         # Visual roadmap editor
 ├── viewer.html         # Roadmap viewer
 ├── viewer.js           # Viewer logic
-├── style.css           # Premium design system
-├── directory.json      # Available roadmaps list
-└── roadmaps/           # JSON roadmap files
-    └── math.json       # Example roadmap
+├── style.css           # Complete design system
+├── script.js           # Core functionality
+├── directory.json      # Roadmap directory
+└── roadmaps/           # Roadmap files
+    ├── math.json
+    ├── life_algorithm.json
+    └── fix_bug.json
 ```
 
 ---
 
-## 🎯 Design Principles
-
-### Glassmorphism
-- Frosted glass effect using `backdrop-filter: blur()`
-- Semi-transparent backgrounds
-- Subtle borders and shadows
-
-### Color System
-- Premium dark theme with mesh gradients
-- Vibrant accent colors
-- Carefully crafted light theme
-
-### Animations
-- Smooth transitions (300ms cubic-bezier)
-- Hover effects on all interactive elements
-- Loading states and micro-interactions
-
-### Typography
-- System font stack for best performance
-- Clear hierarchy with variable font sizes
-- Optimal line heights for readability
-
----
-
-## 🚀 Future Enhancements
+## 🔮 Roadmap
 
 - [ ] Export to PNG/SVG
 - [ ] Share roadmaps via URL
 - [ ] Search and filter nodes
 - [ ] Import from other formats
-- [ ] Roadmap templates
-- [ ] Export progress reports
+- [ ] Roadmap templates library
+- [ ] Progress reports and analytics
+- [ ] Mobile app version
 - [ ] Collaborative editing
-- [ ] Mobile app
 
 ---
 
 ## 📄 License
 
-MIT License - Feel free to use and modify!
-
----
-
-## 🙏 Credits
-
-Built with ❤️ for the self-learning community.
-
-**Features:**
-- Premium glassmorphism design
-- Smooth animations and micro-interactions
-- Full markdown support
-- Intuitive drag-and-drop editor
-- Beautiful dark/light themes
-
-**Happy Learning! 🚀**
+**MIT License** - Free to use and modify for any purpose.
 
 ---
 
 <div align="center">
-  <p>Made with passion for visual learning</p>
-  <p>⭐ Star us on GitHub if you find this useful!</p>
+
+### Made with 💜 by [whitekotan0](https://github.com/whitekotan0)
+
+**[🌐 Visit RoadHub](https://roadhub.online/)** • **[⭐ Star on GitHub](https://github.com/whitekotan0/roadhub)**
+
+<sub>Transform your learning journey into an interactive adventure</sub>
+
 </div>
