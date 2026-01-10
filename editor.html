@@ -780,7 +780,7 @@
     }
 
     function deleteSelectedNode() {
-      if(!selectedNodeId || !confirm("Delete this node?")) return;
+      if(!selectedNodeId) return;
       roadmapData.nodes = roadmapData.nodes.filter(n => n.id !== selectedNodeId);
       roadmapData.nodes.forEach(n => {
         if(n.prerequisites) n.prerequisites = n.prerequisites.filter(p => p !== selectedNodeId);
@@ -801,14 +801,9 @@
       selectedLink = linkElement;
       d3.select(linkElement).classed('selected', true);
       
-      // Show delete button or just delete immediately
-      if (confirm('Delete this connection?')) {
-        deleteLink(data);
-        selectedLink = null;
-      } else {
-        d3.select(linkElement).classed('selected', false);
-        selectedLink = null;
-      }
+      // Delete immediately without confirmation
+      deleteLink(data);
+      selectedLink = null;
     }
     
     function deleteLink(data) {

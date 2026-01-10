@@ -221,11 +221,9 @@ function resetView() {
 }
 
 function clearProgress() {
-  if(confirm("Are you sure? This deletes progress for the CURRENT roadmap.")) {
-    if(progress[currentMapId]) delete progress[currentMapId];
-    localStorage.setItem('roadmap-progress', JSON.stringify(progress));
-    location.reload();
-  }
+  if(progress[currentMapId]) delete progress[currentMapId];
+  localStorage.setItem('roadmap-progress', JSON.stringify(progress));
+  location.reload();
 }
 
 // Start
