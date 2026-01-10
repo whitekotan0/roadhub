@@ -405,10 +405,25 @@ button:disabled {
   display: flex;
   gap: var(--spacing-md);
   justify-content: center;
+  align-items: center;
   flex-wrap: wrap;
   position: relative;
   z-index: 1;
   animation: fadeInUp 0.8s ease-out 0.4s both;
+  max-width: 900px;
+  margin: 0 auto;
+}
+
+.btn-hero {
+  font-size: 17px;
+  padding: 18px 36px;
+  transform: scale(1.05);
+  box-shadow: var(--shadow-lg);
+}
+
+.btn-hero:hover {
+  transform: translateY(-4px) scale(1.08);
+  box-shadow: var(--shadow-glow-primary);
 }
 
 .hero .feature-tags {
